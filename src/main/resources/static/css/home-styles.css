@@ -1,0 +1,207 @@
+:root{
+    --naranja: #FF9933;
+    --azul: #3399FF;
+    --gris: #333;
+    --blanco: #FFF;
+    --fondo-claro: #f9f9f9;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body{
+    background-color: var(--blanco);
+    color: var(--gris);
+    line-height: 1.6;
+}
+
+/* NAVBAR (BARRA DE NAVEGACIÓN) */
+nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 1rem 5%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+nav ul{
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+
+nav ul li a{
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: 0.3 ease;
+}
+
+nav ul li a:hover{
+    background: var(--naranja);
+}
+
+/*BOTONES NAVBAR*/
+
+nav ul li a:nth-child(1){
+    background: var(--azul);
+    color: var(--blanco);
+}
+
+nav ul li a:nth-child(2):hover{
+    background: var(--naranja) !important;
+    color: var(--blanco);
+}
+
+/* SECCIÓN PRINCIPAL */
+main{
+    text-align: center;
+    background: url("/imgs/ctg.jpg") center center/cover no-repeat;
+    color: 8rem 2rem;
+    position: relative;
+    min-height: 400px; /* Puedes ajustar la altura mínima si lo deseas */
+    width: 99.45vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    padding: 6rem 0 6rem 0;
+}
+
+main::before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.35);
+}
+
+main h1, main p, main div{
+    position: relative;
+    z-index: 1;
+}
+
+main h1{
+    font-size: 3rem;
+    font-weight: 700;
+    color: #fff;
+
+}
+
+main p{
+    font-size: 1.2rem;
+    margin: 1rem 0 2rem;
+    color: #fff;
+}
+
+main div{
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+main a{
+    text-decoration: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    font-weight: bold;
+    transition: 0.3s ease;
+}
+
+main a:first-child{
+    background: #E94F37;
+    color: var(--blanco);
+}
+
+main a:first-child:hover{
+    background: var(--naranja);
+}
+
+main a:last-child{
+    background: var(--azul);
+    color: var(--blanco);
+}
+
+/* SECCIÓN DE SERVICIOS */
+section{
+    padding: 5rem 10%;
+    background: var(--fondo-claro);
+    text-align: center;
+}
+
+section:nth-of-type(even){
+    background: var(--blanco);
+}
+
+section h2{
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--gris);
+}
+
+/* CARDS OF FEATURES */
+#why-choose-us div, #how-it-works div{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+#why-choose-us div > div, #how-it-works div > div{
+    background: var(--blanco);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+
+#why-choose-us div > div:hover, #how-it-works div > div:hover{
+    transform: translateY(-10px);
+}
+
+/* FOOTER :) */
+
+footer{
+    text-align: center;
+    padding: 2rem;
+    background: var(--gris);
+    color: var(--blanco);
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    margin-top: 2rem;
+}
+
+footer div{
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+footer a{
+    color: rgb(160, 160, 160);
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+footer a:hover{
+    color: var(--blanco);
+}
+
+.logo-navbar {
+    height: 48px;
+    width: auto;
+    display: block;
+    object-fit: contain;
+}

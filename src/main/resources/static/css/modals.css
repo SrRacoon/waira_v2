@@ -1,0 +1,91 @@
+/* Fondo de modales */
+#login-modal, #registerCliente-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+#login-modal.active, #registerCliente-modal.active {
+    display: flex;
+}
+
+/* Apartir de aquí se puede modificar el estilo de los modales */
+#login-modal > div, #registerCliente-modal > div {
+    background: #fff;
+    padding: 2em 1.5em;
+    border-radius: 8px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+    min-width: 300px;
+    max-width: 90vw;
+}
+
+#login-modal h2, #registerCliente-modal h2 {
+    margin-top: 0;
+}
+
+#login-modal a, #registerCliente-modal a {
+    color: #007bff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#close-button {
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    color: #5f5f5f !important;
+    font-size: 1.3em;
+    font-weight: bold;
+    background: none;
+    border: none;
+    z-index: 10;
+}
+
+#login-modal > div, #registerCliente-modal > div {
+    position: relative;
+}
+
+#login-modal label, #registerCliente-modal label {
+    display: block;
+    margin-bottom: 0.2em;
+}
+
+#login-modal input, #registerCliente-modal input {
+    width: 100%;
+    margin-bottom: 1em;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#login-modal input:focus, #registerCliente-modal input:focus {
+    border-color: orange;
+    box-shadow: 0 0 6px 1px orange;
+    outline: none;
+}
+
+#login-modal button, #registerCliente-modal button {
+    width: 100%;
+    padding: 0.7em;
+    background: #E94F37;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 0.5em;
+    transition: 0.3s ease;
+    font-weight: bold;
+}
+
+#login-modal button:hover, #registerCliente-modal button:hover {
+    background: #FF9933;
+}

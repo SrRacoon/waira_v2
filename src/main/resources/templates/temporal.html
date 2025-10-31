@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Temporal</title>
+</head>
+<body>
+    <div th:if="${usuario != null}">
+        <h1>Bienvenido</h1>
+        <p th:if="${deleteError != null}" style="color:red;" th:text="${deleteError}"></p>
+    <p th:text="${'Usuario: ' + usuario.nombre + ' ' + usuario.apellido}"></p>
+    <p th:text="${usuario.rol != null ? 'Rol: ' + usuario.rol.nombreRol : 'Rol: -'}"></p>
+
+        <a th:if="${usuario.rol != null and usuario.rol.nombreRol == 'PROVEEDOR'}" th:href="@{/proveedor/dashboard}">Mi Dashboard</a>
+        <a th:if="${usuario.rol != null and usuario.rol.nombreRol == 'ADMIN'}" th:href="@{/admin/dashboard}">Panel de Administración</a>
+        <a th:if="${usuario.rol != null and usuario.rol.nombreRol == 'CLIENTE'}" th:href="@{/cliente/perfil}">Mi Perfil</a>
+
+        <!-- Mostrar permisos si fueron cargados en el modelo -->
+        <div th:if="${permisos != null}">
+            <h3>Permisos</h3>
+            <ul>
+                <li th:each="p : ${permisos}" th:text="${p.nombrePermiso}"></li>
+            </ul>
+        </div>
+
+        <a th:href="@{/}">Inicio</a>
+        <a th:href="@{/logout}">Cerrar sesión</a>
+    <a th:if="${usuario.idUsuario != null}" th:href="@{/delete-account(id=${usuario.idUsuario})}">Eliminar cuenta</a>
+    </div>
+
+    <div th:unless="${usuario != null}">
+        <h1>Bienvenido</h1>
+        <p>No hay usuario en sesión.</p>
+        <a th:href="@{/}">Ir al inicio</a>
+    </div>
+</body>
+</html>

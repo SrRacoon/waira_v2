@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Waira</title>
+    <link rel="stylesheet" th:href="@{/css/404-style.css}">
+</head>
+<body>
+    <main class="error-404-style" role="main">
+        <section class="error-card" aria-labelledby="error-title">
+            <span class="kicker">Error</span>
+            <h1 id="error-title" th:text="${status} ?: 'Ocurrió un error'"></h1>
+            <p th:text="${error} ?: 'Lo sentimos, ocurrió un error inesperado.'"></p>
+
+            <div class="actions">
+                <a th:href="@{/}" class="btn btn--bubble">Volver al inicio</a>
+            </div>
+
+            <p style="margin-top: 1rem; color: var(--muted);font-size: .9rem;">Código: <strong th:text="${status} ?: '---'"></strong></p>
+
+            <aside class="big-404" aria-hidden="true">
+                <div class="emoji-wrap">
+                    <div class="face">😕</div>
+                </div>
+            </aside>
+        </section>
+    </main>
+</body>
+</html>

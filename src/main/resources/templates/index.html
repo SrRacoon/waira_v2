@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Waira | Experiencias Turísticas Auténticas en Cartagena</title>
+        <link rel="stylesheet" href="/css/modals.css">
+        <link rel="stylesheet" href="/css/home-styles.css">
+    </head>
+    <body>
+        <nav>
+
+            <div>
+                <img class="logo-navbar" th:src="@{/imgs/Waira.svg}">
+            </div>
+
+            <ul>
+                <li th:if="${session.usuarioLogueado == null}">
+                    <a href="javascript:void(0)" onclick="abrirModal('login-modal')">Iniciar Sesión</a>
+                </li>
+                <li th:if="${session.usuarioLogueado == null}">
+                    <a href="javascript:void(0)" onclick="abrirModal('registerCliente-modal')">Registrarse</a>
+                </li>
+
+                <li th:if="${session.usuarioLogueado != null}">
+                    <a th:href="@{/temporal}"><span th:text="'Hola, ' + ${session.usuarioLogueado.nombre}"></span></a>
+                </li>
+            </ul>
+        </nav>
+
+        <main>
+            <h1>Descubre Cartagena con experiencias auténticas</h1>
+            <p>Conecta con operadores locales y vive paquetes turísticos únicos desde una sola plataforma digital.</p>
+            
+            <div>
+                <a href="/explore">Explorar Servicios</a>
+                <a href="#for-operators">Soy Operador Turistico</a>
+            </div>
+            
+        </main>
+
+        <section id="why-choose-us">
+            <h2>¿Por qué elegir Waira?</h2>
+            <div>
+                <div>
+                    <h3>Autenticidad Local</h3>
+                    <p>Accede a experiencias auténticas y personalizadas ofrecidas por operadores locales.</p>
+                </div>
+                <div>
+                    <h3>Facilidad de Uso</h3>
+                    <p>Nuestra plataforma es intuitiva y fácil de navegar, facilitando la reserva de tus aventuras.</p>
+                </div>
+                <div>
+                    <h3>Variedad de Opciones</h3>
+                    <p>Encuentra una amplia gama de paquetes turísticos que se adaptan a todos los gustos y presupuestos.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works">
+            <h2>¿Como Funciona?</h2>
+            <div>
+                <div>
+                    <h3>Explora</h3>
+                    <p>Navega por nuestra plataforma y descubre una variedad de experiencias turísticas en Cartagena.</p>
+                </div>
+                <div>
+                    <h3>Reserva</h3>
+                    <p>Selecciona la experiencia que más te guste y realiza tu reserva de manera segura y sencilla.</p>
+                </div>
+                <div>
+                    <h3>Disfruta</h3>
+                    <p>Vive momentos inolvidables con las experiencias auténticas que has reservado.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="for-operators">
+            <h2>¿Eres Operador Turistico?</h2>
+            <p>Únete a nuestra comunidad y ofrece tus servicios a una audiencia global.</p>
+            <a href="/registro-usuario">Regístrate Aquí</a>
+        </section>
+        
+        <footer>
+            <p>&copy; 2025 Waira. Todos los derechos reservados.</p>
+
+            <div>
+                <a href="/terms">Términos de Servicio</a>
+                <a href="/privacy">Política de Privacidad</a>
+                <a href="/contact">Contacto</a>
+            </div>
+        </footer>
+
+    <div th:replace="~{fragments/modales_auth :: modals}"></div>
+    <script src="/js/modals.js"></script>
+    </body>
+</html>

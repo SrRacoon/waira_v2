@@ -1,0 +1,209 @@
+<!-- fragments/modals.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Thymeleaf fragment to include modals -->
+    <div th:fragment="modals">
+    <div id="login-modal" style="display:none;">
+        <div>
+            <form>
+                <a onclick="cerrarModal('login-modal')" id="close-button">X</a>
+                <h2>Iniciar Sesión</h2>
+
+                <div id="email-group-login">
+                    <label for="login-email">Correo</label>
+                    <input type="email" name="email" id="login-email" required>
+                </div>
+
+                <div id="password-group-login">
+                    <label for="login-contrasena">Contraseña</label>
+                    <input type="password" name="contrasena" id="login-contrasena" autocomplete="off" required>
+                </div>
+
+                <div id="login-error" style="color:red; font-size: 15px;"></div>
+
+                <div>
+                    <a href="javascript:void(0)" onclick="cambiarModal('login-modal','registerCliente-modal')">¿Aún no tienes cuenta?</a>
+                </div>
+                
+                <div id="button-group">
+                    <button type="submit">Ingresar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="registerCliente-modal" style="display:none;">
+        <div>
+            <form>
+                <a onclick="cerrarModal('registerCliente-modal')" id="close-button">X</a>
+                <h2>Registrar</h2>
+
+                <div id="name-group-register">
+                    <label for="reg-nombre">Nombre</label>
+                    <input type="text" name="nombre" id="reg-nombre" required>
+                </div>
+
+                <div id="surname-group-register">
+                    <label for="reg-apellido">Apellido</label>
+                    <input type="text" name="apellido" id="reg-apellido" required>
+                </div>
+
+                <div id="phone-group-register">
+                    <label for="reg-telefono">Teléfono</label>
+                    <input type="tel" name="telefono" id="reg-telefono" pattern="^\+?[0-9\s\-]{7,15}$" required>
+                </div>
+
+                <div id="email-group-register">
+                    <label for="reg-email">Correo</label>
+                    <input type="email" name="email" id="reg-email" required>
+                </div>
+
+                <div id="password-group-register">
+                    <label for="reg-contrasena">Contraseña</label>
+                    <input type="password" name="contrasena" id="reg-contrasena" minlength="8" autocomplete="off" required>
+                </div>
+
+                <div id="confirm-password-group-register">
+                    <label for="reg-confirm_password">Confirmar Contraseña</label>
+                    <input type="password" name="confirmPassword" id="reg-confirm_password" minlength="8" autocomplete="off" required>
+                </div>
+
+                <div id="register-error" style="color:red; font-size: 15px;"></div>
+
+                <div>
+                    <a href="javascript:void(0)" onclick="cambiarModal('registerCliente-modal','login-modal')">¿Ya tienes cuenta?</a>
+                </div>
+
+                <div id="button-group">
+                    <button type="submit">Registrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="registerAdmin-modal" style="display:none;">
+        <div>
+            <form>
+                <!-- Botón para cerrar -->
+                <a onclick="cerrarModal('registerAdmin-modal')" id="close-button">X</a>
+                <h2>Registrar Admin</h2>
+
+                <!-- Campos -->
+                <div>
+                    <label for="admin-nombre">Nombre</label>
+                    <input type="text" name="nombre" id="admin-nombre" required>
+                </div>
+
+                <div>
+                    <label for="admin-apellido">Apellido</label>
+                    <input type="text" name="apellido" id="admin-apellido" required>
+                </div>
+
+                <div>
+                    <label for="admin-telefono">Teléfono</label>
+                    <input type="tel" name="telefono" id="admin-telefono" pattern="^\+?[0-9\s\-]{7,15}$" required>
+                </div>
+
+                <div>
+                    <label for="admin-email">Correo</label>
+                    <input type="email" name="email" id="admin-email" required>
+                </div>
+
+                <!-- Permisos -->
+                <div>
+                    <label>Permisos</label><br>
+                    <label><input type="checkbox" name="permisos" value="SUPER_ADMIN"> Super Admin</label><br>
+                    <label><input type="checkbox" name="permisos" value="ADMIN_PROVEEDOR"> Admin Proveedor</label><br>
+                    <label><input type="checkbox" name="permisos" value="ADMIN_CLIENTE"> Admin Cliente</label><br>
+                    <label><input type="checkbox" name="permisos" value="ADMIN_CONTENIDO"> Admin Contenido</label><br>
+                    <label><input type="checkbox" name="permisos" value="ADMIN_SOPORTE"> Admin Soporte</label><br>
+                    <label><input type="checkbox" name="permisos" value="ADMIN_ANALITICA"> Admin Analítica</label><br>
+                    <label><input type="checkbox" name="permisos" value="ADMIN_FINANZAS"> Admin Finanzas</label>
+                </div>
+
+                <div>
+                    <label for="admin-contrasena">Contraseña</label>
+                    <input type="password" name="contrasena" id="admin-contrasena" minlength="8" required>
+                </div>
+
+                <div>
+                    <label for="admin-confirm-contrasena">Confirmar Contraseña</label>
+                    <input type="password" name="confirmPassword" id="admin-confirm-contrasena" minlength="8" required>
+                </div>
+
+                <div id="register-admin-error" style="color:red; font-size: 15px;"></div>
+
+                <div>
+                    <button type="submit">Registrar Admin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="registerProveedor-modal" style="display:none;">
+        <div>
+            <form>
+            <a onclick="cerrarModal('registerProveedor-modal')" id="close-button">X</a>
+            <h2>Registrar Proveedor</h2>
+
+            <div>
+                <label for="prov-nombre">Nombre</label>
+                <input type="text" name="nombre" id="prov-nombre" required>
+            </div>
+
+            <div>
+                <label for="prov-apellido">Apellido</label>
+                <input type="text" name="apellido" id="prov-apellido" required>
+            </div>
+
+            <div>
+                <label for="prov-telefono">Teléfono</label>
+                <input type="tel" name="telefono" id="prov-telefono" pattern="^\+?[0-9\s\-]{7,15}$" required>
+            </div>
+
+            <div>
+                <label for="prov-email">Correo</label>
+                <input type="email" name="email" id="prov-email" required>
+            </div>
+
+            <div>
+                <label for="prov-company">Nombre de la Empresa</label>
+                <input type="text" name="razonSocial" id="prov-company" required>
+            </div>
+
+            <div>
+                <label for="prov-nit">NIT</label>
+                <input type="text" name="nit" id="prov-nit" required>
+            </div>
+
+            <div>
+                <label for="prov-address">Dirección</label>
+                <input type="text" name="direccion" id="prov-address" required>
+            </div>
+
+            <div>
+                <label for="prov-contrasena">Contraseña</label>
+                <input type="password" name="contrasena" id="prov-contrasena" minlength="8" required>
+            </div>
+
+            <div>
+                <label for="prov-confirm-contrasena">Confirmar Contraseña</label>
+                <input type="password" name="confirmPassword" id="prov-confirm-contrasena" minlength="8" required>
+            </div>
+
+            <div id="register-prov-error" style="color:red; font-size: 15px;"></div>
+
+            <div>
+                <button type="submit">Registrar Proveedor</button>
+            </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script src="/js/auth.js"></script>
+
+    </div>
+</body>
+</html>
