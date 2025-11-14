@@ -18,24 +18,7 @@ public class Usuario {
     @Column(nullable = false, length = 15)
     private String nombre;
 
-    @Column(nullable = false, length = 15)
-    private String apellido;
-
-    @Column(nullable = false, length = 15)
-    private String telefono;
-
-    @Column(nullable = false, unique = true, length = 100)
-    private String email;
-
-    @Column(nullable = false, length = 100)
-    private String contrasena;
-
-    @ManyToOne
-    @JoinColumn(name = "id_rol", nullable = false)
-    private Rol rol;
-
-    @Column(nullable = false)
-    private Boolean estadoCuenta = true;
+    
 }
 
 
