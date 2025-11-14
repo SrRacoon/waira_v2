@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Waira | Experiencias Turísticas Auténticas en Cartagena</title>
-        <link rel="stylesheet" href="/css/modals.css">
+        <link rel="stylesheet" href="/css/auth-styles.css">
         <link rel="stylesheet" href="/css/home-styles.css">
     </head>
     <body>
@@ -16,10 +16,10 @@
 
             <ul>
                 <li th:if="${session.usuarioLogueado == null}">
-                    <a href="javascript:void(0)" onclick="abrirModal('login-modal')">Iniciar Sesión</a>
+                    <a href="javascript:void(0)" onclick="abrirModal('login')">Iniciar Sesión</a>
                 </li>
                 <li th:if="${session.usuarioLogueado == null}">
-                    <a href="javascript:void(0)" onclick="abrirModal('registerCliente-modal')">Registrarse</a>
+                    <a href="javascript:void(0)" onclick="abrirModal('registro-usuario')">Registrarse</a>
                 </li>
 
                 <li th:if="${session.usuarioLogueado != null}">
@@ -91,7 +91,7 @@
             </div>
         </footer>
 
-    <div th:replace="~{fragments/modales_auth :: modals}"></div>
-    <script src="/js/modals.js"></script>
+        <div th:replace="~{fragments/vistas_auth :: modales_auth}"></div>
+        <script th:src="@{/js/activar-modales.js}"></script>
     </body>
 </html>

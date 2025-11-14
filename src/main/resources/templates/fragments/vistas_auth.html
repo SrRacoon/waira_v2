@@ -1,0 +1,118 @@
+<!-- fragments/modals.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="modales_auth">
+
+    <!-- Modal Login -->
+    <div id="login" class="modal oculto">
+        <div class="modal-contenido">
+            <form>
+
+                <button type="button" class="boton-cerrar" onclick="cerrarModal('login')">X</button>
+
+                <h2 class="titulo-modal">Iniciar Sesión</h2>
+
+                <div class="grupo-formulario" id="email-grup-login">
+                    <label for="login-email">Correo</label>
+                    <input type="email" name="email" id="login-email" required>
+                </div>
+
+                <div class="grupo-formulario" id="contraseña-grup-login">
+                    <label for="login-contrasena">Contraseña</label>
+                    <input type="password" name="contraseña" id="login-contrasena" autocomplete="off" required>
+                </div>
+
+                <div id="error-login" class="mensaje-error"></div>
+
+                <div class="cambio-modal">
+                    <a href="javascript:void(0)" onclick="cambiarModal('login','registro-usuario')">
+                        ¿Aún no tienes cuenta?
+                    </a>
+                </div>
+
+                <div class="grupo-boton" id="boton-grup-login">
+                    <button type="submit" class="boton">Ingresar</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Registro -->
+    <div id="registro-usuario" class="modal oculto">
+        <div class="modal-contenido">
+            <form>
+
+                <button type="button" class="boton-cerrar" onclick="cerrarModal('registro-usuario')">X</button>
+
+                <h2 class="titulo-modal">Registrar</h2>
+
+                <div class="grupo-formulario" id="nombres-grup-registro">
+                    <label for="input-nombres">Nombres</label>
+                    <input type="text" name="nombres" id="input-nombres" required>
+                </div>
+
+                <div class="grupo-formulario" id="apellidos-grup-registro">
+                    <label for="input-apellidos">Apellidos</label>
+                    <input type="text" name="apellidos" id="input-apellidos" required>
+                </div>
+
+                <div class="grupo-formulario" id="tipo-documeto-grup-registro">
+                    <label for="input-tipo-documento">Tipo de Documento</label>
+                    <select name="tipoDocumento" id="input-tipo-documento" required>
+                        <option value="0" disabled selected>Seleccione una opción</option>
+                        <option value="1">Cédula de Ciudadanía</option>
+                        <option value="2">Cédula de Extranjería</option>
+                        <option value="3">Pasaporte</option>
+                    </select>
+                </div>
+
+                <div class="grupo-formulario" id="documento-grup-registro">
+                    <label for="input-documento">Documento</label>
+                    <input type="text" name="documento" id="input-documento" required>
+                </div>
+
+                <div class="grupo-formulario" id="telefono-grup-registro">
+                    <label for="input-telefono">Teléfono</label>
+                    <input type="tel" name="telefono" id="input-telefono"
+                           pattern="^\+?[0-9\s\-]{7,15}$" required>
+                </div>
+
+                <div class="grupo-formulario" id="email-grup-registro">
+                    <label for="input-email">Correo</label>
+                    <input type="email" name="email" id="input-email" required>
+                </div>
+
+                <div class="grupo-formulario" id="contraseña-group-register">
+                    <label for="input-contraseña">Contraseña</label>
+                    <input type="password" name="contraseña" id="input-contraseña"
+                           minlength="8" autocomplete="off" required>
+                </div>
+
+                <div class="grupo-formulario" id="confirm-contraseña-group-register">
+                    <label for="input-confirm_contraseña">Confirmar Contraseña</label>
+                    <input type="password" name="confirmContraseña" id="input-confirm_contraseña"
+                           minlength="8" autocomplete="off" required>
+                </div>
+
+                <div id="error-registro" class="mensaje-error"></div>
+
+                <div class="cambio-modal">
+                    <a href="javascript:void(0)" onclick="cambiarModal('registro-usuario','login')">
+                        ¿Ya tienes cuenta?
+                    </a>
+                </div>
+
+                <div class="grupo-boton" id="boton-grup-registro">
+                    <button type="submit" class="boton">Registrar</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
+</div>
+</body>
+</html>
