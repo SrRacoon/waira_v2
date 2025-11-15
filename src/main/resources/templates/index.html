@@ -23,7 +23,7 @@
                 </li>
 
                 <li th:if="${session.usuarioLogueado != null}">
-                    <a th:href="@{/temporal}"><span th:text="'Hola, ' + ${session.usuarioLogueado.nombre}"></span></a>
+                    <a th:href="@{/explorar}"><span th:text="'Hola, ' + ${session.usuarioLogueado.nombres}"></span></a>
                 </li>
             </ul>
         </nav>
@@ -78,7 +78,8 @@
         <section id="for-operators">
             <h2>¿Eres Operador Turistico?</h2>
             <p>Únete a nuestra comunidad y ofrece tus servicios a una audiencia global.</p>
-            <a href="/registro-usuario">Regístrate Aquí</a>
+            <a href="javascript:void(0)" th:if="${session.usuarioLogueado == null}" onclick="abrirModal('registro-usuario')">Regístrate Aquí</a>
+            <a href="javascript:void(0)" th:if="${session.usuarioLogueado != null}" onclick="abrirModalSolicitud()">Regístrate Aquí</a>
         </section>
         
         <footer>

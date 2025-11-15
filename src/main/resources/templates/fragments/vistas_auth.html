@@ -61,10 +61,10 @@
                 <div class="grupo-formulario" id="tipo-documeto-grup-registro">
                     <label for="input-tipo-documento">Tipo de Documento</label>
                     <select name="tipoDocumento" id="input-tipo-documento" required>
-                        <option value="0" disabled selected>Seleccione una opción</option>
-                        <option value="1">Cédula de Ciudadanía</option>
-                        <option value="2">Cédula de Extranjería</option>
-                        <option value="3">Pasaporte</option>
+                        <option value="" disabled selected>Seleccione una opción</option>
+                        <option value="CC">Cédula de Ciudadanía</option>
+                        <option value="CE">Cédula de Extranjería</option>
+                        <option value="PAS">Pasaporte</option>
                     </select>
                 </div>
 
@@ -112,7 +112,81 @@
         </div>
     </div>
 
+    <!-- Modal Solicitud Proveedor -->
+    <div id="solicitud-proveedor" class="modal oculto">
+        <div class="modal-contenido">
+            <form>
+
+                <button type="button" class="boton-cerrar" onclick="cerrarModal('solicitud-proveedor')">X</button>
+
+                <h2 class="titulo-modal">Conviértete en Proveedor</h2>
+                
+                <p style="font-size: 14px; color: #666; margin-bottom: 15px;">
+                    📋 Plazo de respuesta: 15 días para que un administrador revise tu solicitud.
+                </p>
+
+                <div class="grupo-formulario">
+                    <label for="prov-nit">NIT</label>
+                    <input type="text" name="nit" id="prov-nit" required>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="prov-razon-social">Razón Social</label>
+                    <input type="text" name="razonSocial" id="prov-razon-social" required>
+                </div>
+
+                <h3 style="font-size: 1.1em; margin-top: 20px; margin-bottom: 10px; color: #333;">Dirección</h3>
+
+                <div class="grupo-formulario">
+                    <label for="prov-tipo-via">Tipo de Vía</label>
+                    <input type="text" name="tipoVia" id="prov-tipo-via" placeholder="Ej: Calle, Carrera, Avenida" required>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="prov-numero">Número</label>
+                    <input type="text" name="numero" id="prov-numero" placeholder="Ej: 123" required>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="prov-complemento">Complemento (Apto, Casa, etc.)</label>
+                    <input type="text" name="complemento" id="prov-complemento">
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="prov-barrio">Barrio</label>
+                    <input type="text" name="barrio" id="prov-barrio" required>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="prov-ciudad">Ciudad</label>
+                    <input type="text" name="ciudad" id="prov-ciudad" required>
+                </div>
+
+                <div id="error-solicitud-proveedor" class="mensaje-error"></div>
+
+                <div class="grupo-boton">
+                    <button type="submit" class="boton">Enviar Solicitud</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Alerta Reutilizable -->
+    <div id="modal-alerta" class="modal oculto">
+        <div class="modal-contenido">
+            <button type="button" class="boton-cerrar" onclick="cerrarModalAlerta()">X</button>
+            <h2 class="titulo-modal" id="alerta-titulo">Notificación</h2>
+            <p id="alerta-mensaje" style="font-size: 16px; color: #333; margin: 20px 0;"></p>
+            <div class="grupo-boton">
+                <button type="button" class="boton" onclick="cerrarModalAlerta()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
     <script src="/js/auth.js"></script>
 </div>
 </body>
 </html>
+
+

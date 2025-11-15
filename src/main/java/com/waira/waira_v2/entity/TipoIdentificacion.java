@@ -20,6 +20,7 @@ import lombok.Setter;
 public class TipoIdentificacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_tipo_identificacion")
     private Integer idTipoDocumento;
 
     @Column(name = "nombre_tipo", nullable = false, unique  = true, length = 50)
