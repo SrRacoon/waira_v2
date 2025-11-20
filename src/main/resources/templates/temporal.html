@@ -9,7 +9,6 @@
         <h1>Bienvenido</h1>
         <p th:if="${deleteError != null}" style="color:red;" th:text="${deleteError}"></p>
     <p th:text="${'Usuario: ' + usuario.nombre + ' ' + usuario.apellido}"></p>
-    <p th:text="${usuario.rol != null ? 'Rol: ' + usuario.rol.nombreRol : 'Rol: -'}"></p>
 
         <a th:if="${usuario.rol != null and usuario.rol.nombreRol == 'PROVEEDOR'}" th:href="@{/proveedor/dashboard}">Mi Dashboard</a>
         <a th:if="${usuario.rol != null and usuario.rol.nombreRol == 'ADMIN'}" th:href="@{/admin/dashboard}">Panel de Administración</a>

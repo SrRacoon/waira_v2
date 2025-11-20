@@ -1,7 +1,4 @@
 <!-- fragments/modals.html -->
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
 <div th:fragment="modales_auth">
 
     <!-- Modal Login -->
@@ -172,13 +169,13 @@
         </div>
     </div>
 
-    <!-- Modal de Alerta Reutilizable -->
+    <!-- Modal de Alerta-->
     <div id="modal-alerta" class="modal oculto">
         <div class="modal-contenido">
             <button type="button" class="boton-cerrar" onclick="cerrarModalAlerta()">X</button>
             <h2 class="titulo-modal" id="alerta-titulo">Notificación</h2>
             <p id="alerta-mensaje" style="font-size: 16px; color: #333; margin: 20px 0;"></p>
-            <div class="grupo-boton">
+            <div class="grupo-boton" id="alerta-botones">
                 <button type="button" class="boton" onclick="cerrarModalAlerta()">Aceptar</button>
             </div>
         </div>
@@ -186,7 +183,5 @@
 
     <script src="/js/auth.js"></script>
 </div>
-</body>
-</html>
 
 

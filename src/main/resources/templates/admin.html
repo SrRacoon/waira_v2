@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Administrador | Waira</title>
+    <link rel="stylesheet" href="/css/auth-styles.css">
+    <link rel="stylesheet" href="/css/admin-styles.css">
+</head>
+<body class="admin-body">
+    <div class="admin-topbar">
+        <div class="topbar-left">
+            <a href="/explorar" class="topbar-logo" title="Ir a Explorar">
+                <img src="/imgs/Waira.svg" alt="Waira" class="logo-navbar" />
+            </a>
+        </div>
+        <div class="topbar-right">
+            <a href="/explorar" class="btn-ir-explorar">Explorar</a>
+        </div>
+    </div>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <span>Dashboard Admin</span>
+            </div>
+            <nav class="menu">
+                <a href="#" data-target="dashboard" class="active">
+                    <span class="icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10.5L12 3L21 10.5V20C21 20.5523 20.5523 21 20 21H15C14.4477 21 14 20.5523 14 20V15C14 14.4477 13.5523 14 13 14H11C10.4477 14 10 14.4477 10 15V20C10 20.5523 9.55228 21 9 21H4C3.44772 21 3 20.5523 3 20V10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                    Inicio
+                </a>
+                <a href="#" data-target="usuarios">
+                    <span class="icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 21V19C16 16.7909 14.2091 15 12 15H7C4.79086 15 3 16.7909 3 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 11C12.2091 11 14 9.20914 14 7C14 4.79086 12.2091 3 10 3C7.79086 3 6 4.79086 6 7C6 9.20914 7.79086 11 10 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                    Usuarios
+                </a>
+                <a href="#" data-target="solicitudes">
+                    <span class="icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2"/><path d="M16 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M8 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M3 10H21" stroke="currentColor" stroke-width="2"/></svg>
+                    </span>
+                    Solicitudes
+                </a>
+                <a href="#" id="logout-link" class="logout-item">
+                    <span class="icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3H9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    </span>
+                    Cerrar sesión
+                </a>
+            </nav>
+        </aside>
+        <main class="content">
+            <header class="content-header">
+                <h1 id="section-title">Panel de Administración</h1>
+            </header>
+            <section id="section-dashboard" class="section visible">
+                <div class="welcome-card">
+                    <div class="welcome-title">Panel de Administración</div>
+                    <div class="welcome-subtitle">Gestione usuarios, operadores, paquetes y estadísticas.</div>
+                </div>
+                <div class="metrics">
+                    <div class="metric-card is-users">
+                        <div class="metric-icon">👥</div>
+                        <div>
+                            <div class="metric-title">Total usuarios</div>
+                            <div class="metric-value" id="kpi-total-usuarios">—</div>
+                        </div>
+                    </div>
+                    <div class="metric-card is-operators">
+                        <div class="metric-icon">🏷️</div>
+                        <div>
+                            <div class="metric-title">Total operadores</div>
+                            <div class="metric-value" id="kpi-total-operadores">—</div>
+                        </div>
+                    </div>
+                    <div class="metric-card is-packages">
+                        <div class="metric-icon">🧳</div>
+                        <div>
+                            <div class="metric-title">Paquetes turísticos</div>
+                            <div class="metric-value" id="kpi-total-paquetes">—</div>
+                        </div>
+                    </div>
+                    <div class="metric-card is-reservations">
+                        <div class="metric-icon">📅</div>
+                        <div>
+                            <div class="metric-title">Reservas activas</div>
+                            <div class="metric-value" id="kpi-reservas-activas">—</div>
+                        </div>
+                    </div>
+                    <div class="metric-card is-income">
+                        <div class="metric-icon">💰</div>
+                        <div>
+                            <div class="metric-title">Ingresos del mes</div>
+                            <div class="metric-value" id="kpi-ingresos-mes">—</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="section-usuarios" class="section">
+                <h2>Gestión de Usuarios</h2>
+                <div class="acciones-usuarios">
+                    <input type="text" id="buscar-usuario" placeholder="Buscar por nombre o email" />
+                </div>
+                <div class="table-wrapper">
+                    <table class="tabla">
+                        <thead>
+                            <tr><th class="id-col">ID</th><th class="nombre-col">Nombre</th><th class="email-col">Email</th><th class="estado-col">Estado Cuenta</th><th class="roles-col">Roles</th><th class="acciones-col">Acciones</th></tr>
+                        </thead>
+                        <tbody id="tbody-usuarios"></tbody>
+                    </table>
+                </div>
+                <div class="paginacion" id="paginacion-usuarios">
+                    <button class="pag-btn" id="usuarios-prev">Prev</button>
+                    <span id="usuarios-page-info">Página 1</span>
+                    <button class="pag-btn" id="usuarios-next">Next</button>
+                    <select id="usuarios-page-size">
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="all">Todos</option>
+                    </select>
+                </div>
+            </section>
+            <section id="section-solicitudes" class="section">
+                <h2>Solicitudes de Proveedor</h2>
+                <div class="acciones-solicitudes">
+                    <label for="filtro-estado-solicitudes">Estado:</label>
+                    <select id="filtro-estado-solicitudes">
+                        <option value="ALL" selected>Todos</option>
+                        <option value="PENDIENTE">Pendientes</option>
+                        <option value="CONFIRMADA">Confirmadas/Aprobadas</option>
+                        <option value="DENEGADA">Denegadas</option>
+                    </select>
+                </div>
+                <div class="table-wrapper">
+                    <table class="tabla">
+                        <thead>
+                            <tr><th class="id-col">ID</th><th class="nit-col">NIT</th><th class="razon-col">Razón Social</th><th class="usuario-col">Usuario</th><th class="email-col">Email</th><th class="estado-col">Estado</th><th class="fecha-col">Fecha</th><th class="acciones-col">Acciones</th></tr>
+                        </thead>
+                        <tbody id="tbody-solicitudes"></tbody>
+                    </table>
+                </div>
+                <div class="paginacion" id="paginacion-solicitudes">
+                    <button class="pag-btn" id="solicitudes-prev">Prev</button>
+                    <span id="solicitudes-page-info">Página 1</span>
+                    <button class="pag-btn" id="solicitudes-next">Next</button>
+                    <select id="solicitudes-page-size">
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="all">Todos</option>
+                    </select>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/vistas_auth :: modales_auth}"></div>
+  
+    <script src="/js/activar-modales.js"></script>
+    <script src="/js/admin.js"></script>
+</body>
+</html>

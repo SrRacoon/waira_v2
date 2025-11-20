@@ -3,29 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página no encontrada</title>
+    <title>Error 404 | Waira</title>
+    <link rel="stylesheet" href="/css/home-styles.css">
+    <link rel="stylesheet" href="/css/auth-styles.css">
+    <link rel="stylesheet" href="/css/admin-styles.css">
     <link rel="stylesheet" th:href="@{/css/404-style.css}">
 </head>
-<body>
-    <main class="error-404-style" role="main">
-        <section class="error-card" aria-labelledby="error-404">
-            <span class="kicker">Error 404</span>
-                <h1 id="error-404">No encontramos está página.</h1>
-                <p class="lead">Lo sentimos - la URL que intentaste abrir no existe.</p>
+<body style="background:#ffffff;">
+    <div class="admin-topbar">
+        <div class="topbar-left">
+            <a href="/" class="topbar-logo" title="Ir a Inicio">
+                <img src="/imgs/Waira.svg" alt="Waira" class="logo-navbar" />
+            </a>
+        </div>
+        <div class="topbar-right">
+            <a href="/explorar" class="btn-ir-explorar">Explorar</a>
+        </div>
+    </div>
 
-                <!--Botón de acción centrado-->
-                <div class="actions">
-                <a href="/" class="btn btn--bubble">Volver a la página de inicio</a>
-                </div>
-
-                <p style="margin-top: 1rem; color: var(--muted);font-size: .9rem;">Código: <strong>404</strong></p>
-
-                <!-- Emoji decorativo -->
-                <aside class="big-404" aria-hidden="true">
-                    <div class="emoji-wrap">
-                        <div class="face">😕</div>
-                    </div>
-                </aside>
+    <main class="error-centered" role="main" aria-labelledby="error-code">
+        <div class="error-hero">
+            <h1 id="error-code" class="error-code">404</h1>
+            <h2 class="error-title">¡UPS! NO SE ENCONTRÓ NADA</h2>
+            <p class="error-desc">La página que buscas pudo haber sido eliminada, cambió de nombre o está temporalmente no disponible.</p>
+            <a href="/" class="error-link">Volver al inicio</a>
+        </div>
     </main>
+
+    <div th:replace="~{fragments/vistas_auth :: modales_auth}"></div>
+    <script src="/js/activar-modales.js"></script>
 </body>
 </html>

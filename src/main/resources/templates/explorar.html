@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Explorar - Waira</title>
+  <link rel="stylesheet" href="/css/home-styles.css" />
+  <link rel="stylesheet" href="/css/explorar-styles.css" />
+</head>
+<body>
+  <header class="explorar-header">
+    <div class="brand">
+      <a href="/" class="brand-link">Waira</a>
+      <span class="divider">/</span>
+      <span>Explorar</span>
+    </div>
+    <form id="busqueda-form" class="search-bar" role="search">
+      <input id="input-busqueda" type="search" placeholder="Buscar servicios, categorías o palabras clave..." aria-label="Buscar" />
+      <button class="btn btn-primary" type="submit">Buscar</button>
+    </form>
+  </header>
+
+  <main class="explorar-contenido">
+    <section class="categorias-section">
+      <div class="categorias-header">
+        <h2>Categorías</h2>
+        <div id="categorias-scroll" class="categorias-scroll" aria-label="Filtros por categoría"></div>
+      </div>
+    </section>
+
+    <section class="resultados-header">
+      <div class="kpis">
+        <div class="kpi">
+          <span class="kpi-label">Resultados</span>
+          <span id="kpi-resultados" class="kpi-value">0</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi-label">Categoría</span>
+          <span id="kpi-categoria" class="kpi-value">Todas</span>
+        </div>
+      </div>
+      <div class="ordenado-por">
+        <label for="select-orden">Ordenar por</label>
+        <select id="select-orden">
+          <option value="relevancia">Relevancia</option>
+          <option value="recientes">Más recientes</option>
+          <option value="precio_asc">Precio: menor a mayor</option>
+          <option value="precio_desc">Precio: mayor a menor</option>
+          <option value="vistas_desc">Más vistos</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="grid-section">
+      <div id="grid-servicios" class="grid-servicios" aria-live="polite"></div>
+      <div id="sin-resultados" class="sin-resultados" hidden>
+        <p>No se encontraron servicios para tu búsqueda.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/explorar.js"></script>
+</body>
+</html>

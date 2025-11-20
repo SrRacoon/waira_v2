@@ -1,211 +1,122 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: poppins, sans-serif;
-}
+/* =========================================================
+	ERROR 404 PAGE STYLES (minimal)
+	Secciones:
+	1. Variables
+	2. Reset/Base
+	3. Layout centrado
+	4. Hero (código grande)
+	5. Elementos (título, descripción, enlace)
+	6. Responsive
+========================================================= */
 
-body {
-    background: linear-gradient(135deg, #f5f5f5, #eaeaea);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-form{
-    background: #fff;
-    padding: 2.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-    animation: fadeIn 1s ease-in-out;
-}
-
-h2{
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: #333;
-}
-
-/* Input Styles */
-
-form div{
-    margin-bottom: 1rem;
-}
-
-label{
-    display: block;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #333;
-}
-
-input, select{
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    transition: border-color 0.3s;
-    outline: none;
-}
-
-input:focus, select:focus{
-    border-color: #f15a29;
-    box-shadow: 0 0 6px rgba(241, 90, 41, 0.4);
-    background: #fff;
-}
-
-/* Botón */
-
-button{
-    width: 100%;
-    padding: 0.8rem;
-    border: none;
-    border-radius: 10px;
-    background: #f15a29;
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s ease, background 0.3s ease;
-}
-
-button:hover{
-    background: #d94e24;
-    transform: scale(1.05);
-}
-
-/* Animación :D */
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.90);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-/* Estilos para mensajes de error */
+/* 1. Variables */
 :root {
-    --bg1: #0f172a;
-    --bg2: #0b2545;
-    --accent: #7c3aed;
-    --muted: #a3b2c7;
-    --glass: rgba(255, 255, 255, 0.6);
+  --color-bg: #ffffff;
+  --color-text: #222;
+  --color-text-muted: #555;
+  --color-border: #e5e7eb;
+  --color-primary: #3399FF;
+  --color-primary-shadow: 51,153,255; /* RGB for shadow */
+  --color-accent: #ff5b36;
+  --color-accent-shadow: 255,91,54;
+  --radius-card: 20px;
+  --radius-button: 18px;
+  --shadow-card: 0 6px 24px -6px rgba(0,0,0,.12);
+  --shadow-btn-primary: 0 8px 20px rgba(var(--color-primary-shadow), .35);
+  --shadow-btn-accent: 0 8px 20px rgba(var(--color-accent-shadow), .35);
+  --transition-base: .25s cubic-bezier(.4,.0,.2,1);
+  --topbar-height: 64px;
 }
 
-* {
-    box-sizing: border-box; }
-    html, body {
-        margin: 0;
-        padding: 2rem;
-        font-family: 'Poppins', sans-serif;
-        background: linear-gradient(135deg, var(--bg1), var(--bg2));
-        color: #e6eef8;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center; 
+/* 2. Reset/Base */
+html, body { margin:0; padding:0; }
+body { background:var(--color-bg); font-family:'Poppins', sans-serif; color:var(--color-text); }
+
+/* 3. Layout centrado */
+.error-centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--topbar-height));
+  padding: 4rem 1rem 3.5rem;
+  text-align: center;
+  background: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  position: static !important; /* evitar desplazamiento relativo del hero global */
+  left: 0 !important; /* neutraliza left:50% de home-styles */
+  right: auto !important;
+  margin-left: 0 !important; /* neutraliza margin-left:-50vw */
+  margin-right: 0 !important; /* neutraliza margin-right:-50vw */
+}
+main.error-centered::before { content: none !important; display: none !important; }
+
+/* 4. Hero */
+.error-hero {
+  max-width: 860px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.35rem;
 }
 
-
-.error-404-style {
-    min-height: 100vh;          /* ocupar toda la pantalla */
-    display: flex;              /* usar flexbox :) */
-    align-items: center;        /* centra en vertical */
-    justify-content: center;    /* centra en horizontal */
-    gap: 2.5rem;                /* espacio entre columnas */
-    max-width: 900px;          /* ancho máximo */
-    margin: 0 auto;             /* centra el contenedor */
-    padding: 1rem;              /* padding para pantallas pequeñas */
+/* 5. Elementos */
+.error-code {
+  font-size: 12rem;
+  font-weight: 300;
+  letter-spacing: .05em;
+  background: linear-gradient(135deg, var(--color-accent), #ff9966);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0;
+  line-height: 1;
 }
-
-.error-card{
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.02));
-    padding: 2.25rem;
-    border-radius: 18px;
-    box-shadow: 0 8px 30px 0 rgba(2, 6, 23, 0.6);
-    border: 1px solid rgba(31, 29, 29, 0.4);
-    text-align: center;
-    max-width: 480px;
+.error-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: .18em;
+  color: var(--color-text);
+  margin: 0;
 }
-
-.kicker{
-    display: inline-block;
-    font-size: .85rem;
-    color: var(--muted);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: .5rem;
+.error-desc {
+  font-size: .85rem;
+  line-height: 1.55;
+  max-width: 620px;
+  color: var(--color-text-muted);
+  margin: 0;
 }
-
-h1{
-    font-size: 1.5rem;
-    margin: 0 0 0 0.5rem 0;
-    color: #fff;
-    line-height: 1.05;
+.error-link {
+  margin-top: .6rem;
+  font-size: .9rem;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  position: relative;
+  font-weight: 600;
+  background: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  display: inline-block;
 }
-
-p.lead{
-    margin: 0 0 1rem 1.25rem 0;
-    font-size: 1.1rem;
-    color: var(--muted);
+.error-hero .error-link { color: var(--color-text-muted) !important; background: none !important; }
+.error-link:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 2px;
+  width: 0;
+  background: var(--color-accent); /* cambia gris a naranja */
+  transition: var(--transition-base);
 }
+.error-link:hover:after { width: 100%; }
+.error-link:hover { filter: brightness(1.15); }
 
-.actions{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 2rem;
+/* 6. Responsive */
+@media (max-width:780px){
+  .error-code { font-size:9rem; }
 }
-
-.btn--bubble {
-    background: linear-gradient(135deg, #f15a29, #ff9a3d);
-    color: #fff;
-    padding: .75rem 1.5rem;
-    border-radius: 20px;
-    text-decoration: none;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
-    box-shadow: 0 8px 25px rgba(241, 90, 41, 0.35);
-    transition: transform 0.2s ease, box-shadow 0.3s ease;
-}
-
-.btn--bubble:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 12px 30px rgba(241, 90, 41, 0.5);
-}
-
- /*animaciones*/
-
-@keyframes float {
-    0% { transform: translateY(0);}
-    50% { transform: translateY(-8px);}
-    100% { transform: translateY(0);}
-}
-
-@keyframes bob{
-    0% { transform: translateY(-6px);}
-    50% { transform: translateY(4px);}
-    100% { transform: translateY(-6px);}
-}
-
-/* Estilos para el gran 404 decorativo */
-@media (max-width: 880px) {
-    .error-404-style { grid-template-columns: 1fr; gap: 1.25rem; }
-    .big-404 .digits { font-size: 6rem; } /* corregido */
-}
-
-@media (prefers-reduced-motion: reduce){
-    .big-404 .digits,
-    .emoji-wrap { animation: none; }
+@media (max-width:520px){
+  .error-code { font-size:6.5rem; }
+  .error-title { letter-spacing:.12em; }
 }

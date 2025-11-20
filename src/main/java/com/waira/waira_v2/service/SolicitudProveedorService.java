@@ -27,10 +27,21 @@ public class SolicitudProveedorService {
     private DireccionRepository direccionRepository;
     
     public SolicitudProveedor crearSolicitud(Usuario usuario, SolicitudProveedorDTO dto) {
-        // Verificar si el usuario ya tiene una solicitud pendiente o aprobada
-        solicitudProveedorRepository.findByUsuario(usuario).ifPresent(s -> {
-            throw new IllegalArgumentException("Ya tienes una solicitud de proveedor pendiente o aprobada");
-        });
+        // Permitir nueva solicitud solo si no existe o si la última fue DENEGADA
+        // Buscar la última solicitud por usuario (id más alto)
+        solicitudProveedorRepository.findAll().stream()
+            .filter(s -> s.getUsuario().getIdUsuario().equals(usuario.getIdUsuario()))
+            .sorted((a, b) -> b.getIdSolicitud().compareTo(a.getIdSolicitud()))
+            .findFirst()
+            .ifPresent(s -> {
+                String estado = s.getEstado() != null ? s.getEstado().getNombreEstado() : "";
+                if (!"DENEGADA".equalsIgnoreCase(estado)) {
+                    throw new IllegalArgumentException("Ya tienes una solicitud de proveedor pendiente o aprobada");
+                } else {
+                    // Si es DENEGADA, eliminar la anterior para permitir crear una nueva
+                    solicitudProveedorRepository.delete(s);
+                }
+            });
         
         // Crear y guardar dirección
         Direccion direccion = new Direccion();
@@ -59,5 +70,11 @@ public class SolicitudProveedorService {
 
     public boolean usuarioTieneSolicitud(Usuario usuario) {
         return solicitudProveedorRepository.findByUsuario(usuario).isPresent();
+    }
+
+    public String obtenerEstadoSolicitud(Usuario usuario) {
+        return solicitudProveedorRepository.findByUsuario(usuario)
+                .map(s -> s.getEstado() != null ? s.getEstado().getNombreEstado() : null)
+                .orElse(null);
     }
 }

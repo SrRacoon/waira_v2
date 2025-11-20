@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Proveedor | Dashboard</title>
+    <link rel="stylesheet" href="/css/admin-styles.css">
+    <link rel="stylesheet" href="/css/provider-styles.css">
+    <link rel="stylesheet" href="/css/auth-styles.css">
+</head>
+<body class="provider-body">
+    <!-- Topbar reutilizada -->
+    <div class="provider-topbar">
+        <div class="pt-left">
+            <a href="/" class="pt-logo" title="Inicio">
+                <img src="/imgs/Waira.svg" alt="Waira" />
+            </a>
+        </div>
+        <div class="pt-center">
+            <form action="#" class="pt-search" onsubmit="return false;">
+                <input type="text" placeholder="Buscar servicio..." />
+            </form>
+        </div>
+        <div class="pt-right">
+            <a href="/explorar" class="pt-link">Explorar</a>
+            <div class="pt-avatar" th:text="${session.usuarioLogueado != null ? session.usuarioLogueado.nombres : 'P'}">P</div>
+        </div>
+    </div>
+
+    <div class="provider-layout">
+        <!-- Sidebar -->
+        <aside class="provider-sidebar">
+            <div class="ps-brand">
+                <span class="ps-title">Proveedor</span>
+            </div>
+            <nav class="ps-menu">
+                <a href="/dashboard" class="ps-item" th:classappend="${section} == 'resumen' ? ' active' : ''">Resumen</a>
+                <a href="/dashboard" class="ps-item active" th:classappend="${section} == 'servicios' ? ' active' : ''">Mis Servicios</a>
+                <a href="#" class="ps-item" th:classappend="${section} == 'ajustes' ? ' active' : ''">Ajustes</a>
+                <a href="/logout" class="ps-item ps-logout">Salir</a>
+            </nav>
+        </aside>
+
+        <!-- Contenido principal -->
+        <main class="provider-content" role="main">
+            <header class="pc-header">
+                <h1>Mis Servicios</h1>
+                <a href="/proveedor/servicios/nuevo" class="btn btn-primary crear-servicio-btn">Crear servicio</a>
+            </header>
+
+            <!-- Lista de servicios -->
+            <div class="servicios-wrapper" th:if="${servicios != null && !servicios.isEmpty()}">
+                <div class="servicio-card" th:each="s : ${servicios}">
+                    <div class="servicio-header">
+                        <h2 th:text="${s.nombre}">Nombre Servicio</h2>
+                        <span class="estado" th:text="${s.estado}">Activo</span>
+                    </div>
+                    <p class="servicio-desc" th:text="${s.descripcion}">Descripción breve del servicio.</p>
+                    <div class="servicio-actions">
+                        <a th:href="@{'/proveedor/servicios/' + ${s.id}}" class="btn btn-primary btn-sm">Ver</a>
+                        <a th:href="@{'/proveedor/servicios/' + ${s.id} + '/editar'}" class="btn btn-success btn-sm">Editar</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estado vacío -->
+            <div class="empty-servicios" th:if="${servicios == null || servicios.isEmpty()}">
+                <p>Aún no has creado servicios.</p>
+                <a href="/proveedor/servicios/nuevo" class="btn btn-primary">Crear tu primer servicio</a>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/activar-modales.js"></script>
+</body>
+</html>

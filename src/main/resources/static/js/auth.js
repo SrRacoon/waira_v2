@@ -1,4 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Verificar estado de solicitud de proveedor al cargar
+    fetch('/api/auth/verificar-solicitud', { credentials: 'include' })
+        .then(res => res.json())
+        .then(data => {
+            // Permitir abrir el modal si fue denegada (alerta se mostrará al intentar abrir)
+            if (data && data.tieneSolicitud && (data.estado || '').toString().toUpperCase() === 'DENEGADA') {
+                const btn = document.querySelector('[data-open="solicitud-proveedor"]');
+                if (btn) btn.disabled = false;
+            }
+        })
+        .catch(() => {});
     const registroForm = document.querySelector("#registro-usuario form");
     const loginForm = document.querySelector("#login form");
     const solicitudForm = document.querySelector("#solicitud-proveedor form");
@@ -32,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: {
                     "Content-Type": "application/json"
                 },
+                credentials: 'include',
                 body: JSON.stringify(datos)
             })
             .then(async response => {
@@ -74,6 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: {
                     "Content-Type": "application/json"
                 },
+                credentials: 'include',
                 body: JSON.stringify(datos)
             })
             .then(async response => {
@@ -126,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: {
                     "Content-Type": "application/json"
                 },
+                credentials: 'include',
                 body: JSON.stringify(datos)
             })
             .then(async response => {

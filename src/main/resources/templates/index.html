@@ -23,7 +23,7 @@
                 </li>
 
                 <li th:if="${session.usuarioLogueado != null}">
-                    <a th:href="@{/explorar}"><span th:text="'Hola, ' + ${session.usuarioLogueado.nombres}"></span></a>
+                    <a id="greeting-link" th:href="@{/explorar}"><span th:text="'Hola, ' + ${session.usuarioLogueado.nombres}"></span></a>
                 </li>
             </ul>
         </nav>
@@ -94,5 +94,14 @@
 
         <div th:replace="~{fragments/vistas_auth :: modales_auth}"></div>
         <script th:src="@{/js/activar-modales.js}"></script>
+        <script>
+        (function(){
+            const link = document.getElementById('greeting-link');
+            if(!link) return;
+            fetch('/api/auth/destino')
+              .then(r => r.ok ? r.json() : null)
+              .then(data => { if(data && data.redirect) { link.setAttribute('href', data.redirect); } });
+        })();
+        </script>
     </body>
 </html>

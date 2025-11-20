@@ -1,158 +1,134 @@
-#login, #registro-usuario {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(3px);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem;
+/* =========================================================
+	AUTH MODALS STYLES
+	Secciones:
+	1. Overlays / Estado activo
+	2. Contenedor modal
+	3. Animaciones
+	4. Tipografía / título / cierre
+	5. Formulario (grupos, inputs, focus)
+	6. Enlaces de cambio (login/registro)
+	7. Botón principal
+	8. Mensajes de error
+========================================================= */
+
+/* 1. Overlays */
+#login,
+#registro-usuario,
+.modal {
+	display: none;
+	position: fixed;
+	inset: 0;
+	background: rgba(0,0,0,.55);
+	backdrop-filter: blur(3px);
+	z-index: 1000;
+	justify-content: center;
+	align-items: center;
+	padding: 1rem;
 }
 
 #login.activo,
-#registro-usuario.activo {
-    display: flex;
-}
+#registro-usuario.activo { display: flex; }
+.modal.activo { display: flex; }
 
-.modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(3px);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem;
-}
-
+/* 2. Contenedor modal */
 .modal-contenido {
-    background: #ffffff;
-    padding: 2.2em 1.8em;
-    border-radius: 14px;
-    width: 100%;
-    max-width: 420px;
-
-    max-height: 90vh;     
-    overflow-y: auto;     
-    scrollbar-width: thin;
-    scrollbar-color: #ccc transparent;
-
-    box-shadow: 0 10px 35px rgba(0,0,0,0.18);
-    animation: aparecer 0.2s ease-out;
-    position: relative;
+	background: #ffffff;
+	padding: 2.2em 1.8em;
+	border-radius: 14px;
+	width: 100%;
+	max-width: 420px;
+	max-height: 90vh;
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: #ccc transparent;
+	box-shadow: 0 10px 35px rgba(0,0,0,.18);
+	animation: aparecer .2s ease-out;
+	position: relative;
 }
 
-
+/* 3. Animaciones */
 @keyframes aparecer {
-    from {
-        opacity: 0;
-        transform: translateY(-10px) scale(0.98);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+	from { opacity: 0; transform: translateY(-10px) scale(.98); }
+	to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
+/* 4. Título / botón cerrar */
 .titulo-modal {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    font-size: 1.6em;
-    font-weight: 600;
-    color: #222;
+	margin: 0 0 1rem;
+	font-size: 1.6em;
+	font-weight: 600;
+	color: #222;
 }
 
 .boton-cerrar {
-    position: absolute;
-    top: 10px;
-    right: 14px;
-    font-size: 1.4em;
-    color: #6b6b6b !important;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: 0.2s ease;
+	position: absolute;
+	top: 10px; right: 14px;
+	font-size: 1.4em;
+	color: #6b6b6b !important;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	transition: .2s ease;
 }
+.boton-cerrar:hover { color: #000 !important; transform: scale(1.1); }
 
-.boton-cerrar:hover {
-    color: #000 !important;
-    transform: scale(1.1);
-}
-
-.grupo-formulario {
-    margin-bottom: 1rem;
-}
-
+/* 5. Formulario */
+.grupo-formulario { margin-bottom: 1rem; }
 .grupo-formulario label {
-    font-size: 0.9em;
-    color: #444;
-    margin-bottom: 0.4em;
-    display: block;
+	font-size: .9em;
+	color: #444;
+	margin-bottom: .4em;
+	display: block;
 }
-
 .grupo-formulario input,
 .grupo-formulario select {
-    width: 100%;
-    padding: 0.65em 0.8em;
-    border: 1px solid #d0d0d0;
-    border-radius: 8px;
-    font-size: 1em;
-    background: #fafafa;
-    transition: 0.25s ease;
+	width: 100%;
+	padding: .65em .8em;
+	border: 1px solid #d0d0d0;
+	border-radius: 8px;
+	font-size: 1em;
+	background: #fafafa;
+	transition: .25s ease;
 }
-
 .grupo-formulario input:focus,
 .grupo-formulario select:focus {
-    border-color: #ff8b3d;
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(255,140,60,0.25);
-    outline: none;
+	border-color: #ff8b3d;
+	background: #fff;
+	box-shadow: 0 0 0 3px rgba(255,140,60,.25);
+	outline: none;
 }
 
-.cambio-modal {
-    margin-top: 0.4em;
-    text-align: right;
-}
-
+/* 6. Enlace cambio modal */
+.cambio-modal { margin-top: .4em; text-align: right; }
 .cambio-modal a {
-    color: #ff6a2e;
-    font-size: 0.9em;
-    cursor: pointer;
-    text-decoration: none;
-    transition: 0.2s ease;
+	color: #ff6a2e;
+	font-size: .9em;
+	cursor: pointer;
+	text-decoration: none;
+	transition: .2s ease;
 }
+.cambio-modal a:hover { color: #e14f19; }
 
-.cambio-modal a:hover {
-    color: #e14f19;
-}
-
+/* 7. Botón principal */
 .boton {
-    width: 100%;
-    padding: 0.75em;
-    background: linear-gradient(135deg, #ff6a2e, #ff8c4f);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    font-size: 1.05em;
-    cursor: pointer;
-    margin-top: 0.5em;
-    font-weight: 600;
-    transition: 0.25s ease;
+	width: 100%;
+	padding: .75em;
+	background: linear-gradient(135deg, #ff6a2e, #ff8c4f);
+	color: #fff;
+	border: none;
+	border-radius: 10px;
+	font-size: 1.05em;
+	cursor: pointer;
+	margin-top: .5em;
+	font-weight: 600;
+	transition: .25s ease;
 }
+.boton:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.boton:active { transform: scale(.98); }
 
-.boton:hover {
-    filter: brightness(1.08);
-    transform: translateY(-1px);
-}
-
-.boton:active {
-    transform: scale(0.98);
-}
-
+/* 8. Mensajes error */
 .mensaje-error {
-    color: #e30000;
-    font-size: 0.9em;
-    margin: 0.3em 0 0.7em 0;
+	color: #e30000;
+	font-size: .9em;
+	margin: .3em 0 .7em 0;
 }
