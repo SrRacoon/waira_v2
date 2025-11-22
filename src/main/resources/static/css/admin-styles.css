@@ -256,5 +256,3 @@ body { background: var(--fondo-claro); font-family: 'Poppins', sans-serif; }
   .admin-layout { grid-template-columns: 1fr; }
   .sidebar { position: relative; height: auto; }
 }
-
-/* (Bloques antiguos compactados sustituidos por secciones arriba) */

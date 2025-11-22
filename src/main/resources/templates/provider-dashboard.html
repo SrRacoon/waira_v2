@@ -8,8 +8,7 @@
     <link rel="stylesheet" href="/css/provider-styles.css">
     <link rel="stylesheet" href="/css/auth-styles.css">
 </head>
-<body class="provider-body">
-    <!-- Topbar reutilizada -->
+<body class="provider-body" th:with="currentSection=${currentSection != null ? currentSection : (param.section != null ? param.section[0] : 'inicio')}">
     <div class="provider-topbar">
         <div class="pt-left">
             <a href="/" class="pt-logo" title="Inicio">
@@ -17,8 +16,17 @@
             </a>
         </div>
         <div class="pt-center">
-            <form action="#" class="pt-search" onsubmit="return false;">
-                <input type="text" placeholder="Buscar servicio..." />
+            <form th:action="@{/dashboard}" method="get" class="pt-search">
+                <input
+                    type="search"
+                    name="q"
+                    placeholder="Buscar servicio..."
+                    autocomplete="off"
+                    spellcheck="false"
+                    aria-label="Buscar entre mis servicios"
+                    data-servicios-search
+                    th:value="${buscarServiciosQuery}" />
+                <input type="hidden" name="section" value="servicios" />
             </form>
         </div>
         <div class="pt-right">
@@ -28,49 +36,424 @@
     </div>
 
     <div class="provider-layout">
-        <!-- Sidebar -->
         <aside class="provider-sidebar">
             <div class="ps-brand">
                 <span class="ps-title">Proveedor</span>
             </div>
             <nav class="ps-menu">
-                <a href="/dashboard" class="ps-item" th:classappend="${section} == 'resumen' ? ' active' : ''">Resumen</a>
-                <a href="/dashboard" class="ps-item active" th:classappend="${section} == 'servicios' ? ' active' : ''">Mis Servicios</a>
-                <a href="#" class="ps-item" th:classappend="${section} == 'ajustes' ? ' active' : ''">Ajustes</a>
-                <a href="/logout" class="ps-item ps-logout">Salir</a>
+                <a th:href="@{/dashboard(section='inicio')}" class="ps-item" th:classappend="${currentSection} == 'inicio' ? ' active' : ''">
+                    <span class="ps-icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 10.5L12 3L21 10.5V20C21 20.5523 20.5523 21 20 21H15C14.4477 21 14 20.5523 14 20V15C14 14.4477 13.5523 14 13 14H11C10.4477 14 10 14.4477 10 15V20C10 20.5523 9.55228 21 9 21H4C3.44772 21 3 20.5523 3 20V10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                    <span>Inicio</span>
+                </a>
+                <a th:href="@{/dashboard(section='servicios')}" class="ps-item" th:classappend="${currentSection} == 'servicios' ? ' active' : ''">
+                    <span class="ps-icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" />
+                            <path d="M16 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            <path d="M8 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            <path d="M3 10H21" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </span>
+                    <span>Mis Servicios</span>
+                </a>
+                <a th:href="@{/dashboard(section='ventas')}" class="ps-item" th:classappend="${currentSection} == 'ventas' ? ' active' : ''">
+                    <span class="ps-icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 3H5L6 9H19L21 5H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M16 13C14.8954 13 14 13.8954 14 15C14 16.1046 14.8954 17 16 17C17.1046 17 18 16.1046 18 15C18 13.8954 17.1046 13 16 13Z" stroke="currentColor" stroke-width="2" />
+                            <path d="M9 13C7.89543 13 7 13.8954 7 15C7 16.1046 7.89543 17 9 17C10.1046 17 11 16.1046 11 15C11 13.8954 10.1046 13 9 13Z" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </span>
+                    <span>Ventas y Reservas</span>
+                </a>
+                <a th:href="@{/dashboard(section='estadisticas')}" class="ps-item" th:classappend="${currentSection} == 'estadisticas' ? ' active' : ''">
+                    <span class="ps-icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 12H9V20H5V12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M10 8H14V20H10V8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M15 4H19V20H15V4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                    <span>Estadísticas</span>
+                </a>
+                <a href="#" class="ps-item" th:classappend="${currentSection} == 'ajustes' ? ' active' : ''">
+                    <span class="ps-icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.325 4.31799C10.7468 2.99203 13.2532 2.99203 13.675 4.31799C13.9574 5.20753 14.9265 5.67498 15.782 5.31284C17.0415 4.77958 18.2204 6.03857 17.6872 7.29797C17.325 8.1535 17.7925 9.1226 18.682 9.40496C20.008 9.8268 20.008 12.3332 18.682 12.755C17.7925 13.0374 17.325 14.0065 17.6872 14.862C18.2204 16.1215 16.9614 17.3004 15.702 16.7672C14.8465 16.405 13.8774 16.8725 13.595 17.762C13.1732 19.088 10.6668 19.088 10.245 17.762C9.96263 16.8725 8.99352 16.405 8.138 16.7672C6.8786 17.3004 5.69959 16.0414 6.23285 14.782C6.595 13.9265 6.12754 12.9574 5.238 12.675C3.91204 12.2532 3.91204 9.7468 5.238 9.325C6.12754 9.04264 6.595 8.07353 6.23285 7.21799C5.69959 5.95859 6.95858 4.77964 8.218 5.31284C9.07352 5.67499 10.0426 5.20753 10.325 4.31799Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <circle cx="12" cy="11" r="2" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </span>
+                    <span>Ajustes</span>
+                </a>
+                <a href="/logout" class="ps-item ps-logout">
+                    <span class="ps-icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            <path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </span>
+                    <span>Cerrar Sesión</span>
+                </a>
             </nav>
         </aside>
 
-        <!-- Contenido principal -->
         <main class="provider-content" role="main">
-            <header class="pc-header">
-                <h1>Mis Servicios</h1>
-                <a href="/proveedor/servicios/nuevo" class="btn btn-primary crear-servicio-btn">Crear servicio</a>
-            </header>
+            <section class="provider-home" th:if="${currentSection} == 'inicio'">
+                <div class="home-hero">
+                    <p class="hero-pill">Panel del proveedor</p>
+                    <h1>Gestiona tu oferta con confianza</h1>
+                    <p>Accede rápido a tus servicios y mantente al día con las acciones clave para tu negocio.</p>
+                </div>
+                <div class="home-stats" th:if="${statsProveedor != null}">
+                    <article class="stat-card">
+                        <p class="stat-label">Servicios publicados</p>
+                        <h2 class="stat-value" th:text="${statsProveedor.totalServicios}">0</h2>
+                        <span class="stat-sub" th:text="'Activos: ' + ${statsProveedor.serviciosActivos}">Activos: 0</span>
+                    </article>
+                    <article class="stat-card">
+                        <p class="stat-label">Vistas acumuladas</p>
+                        <h2 class="stat-value" th:text="${statsProveedor.totalVistas}">0</h2>
+                        <span class="stat-sub" th:text="${statsProveedor.totalServicios > 0 ? 'Promedio por servicio: ' + (statsProveedor.totalVistas / statsProveedor.totalServicios) : 'Sin datos'}">Sin datos</span>
+                    </article>
+                    <article class="stat-card">
+                        <p class="stat-label">Precio promedio</p>
+                        <h2 class="stat-value" th:text="${statsProveedor.precioPromedioTexto}">$0</h2>
+                    </article>
+                </div>
+                <div class="home-grid">
+                    <a th:href="@{/dashboard(section='servicios')}" class="home-card">
+                        <span class="home-icon" aria-hidden="true">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="2" />
+                                <path d="M3 10H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                        </span>
+                        <div class="home-info">
+                            <h3>Mis servicios</h3>
+                            <p>Revisa estados, tarifas y disponibilidad de todas tus publicaciones activas.</p>
+                        </div>
+                        <span class="home-cta">Abrir</span>
+                    </a>
+                    <a href="/proveedor/servicios/nuevo" class="home-card">
+                        <span class="home-icon" aria-hidden="true">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 5V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                        </span>
+                        <div class="home-info">
+                            <h3>Crear servicio</h3>
+                            <p>Lanza nuevas experiencias o paquetes en minutos con nuestro formulario guiado.</p>
+                        </div>
+                        <span class="home-cta">Nuevo</span>
+                    </a>
+                    <a href="/explorar" class="home-card">
+                        <span class="home-icon" aria-hidden="true">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 11.5C21 16.1944 16.9706 20 12 20C10.1925 20 8.50775 19.4469 7.11111 18.4976L3 20L4.16462 16.0914C3.42494 14.7901 3 13.2461 3 11.5C3 6.80558 7.02944 3 12 3C16.9706 3 21 6.80558 21 11.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <div class="home-info">
+                            <h3>Explorar demanda</h3>
+                            <p>Descubre qué buscan los viajeros y ajusta tu oferta para destacar.</p>
+                        </div>
+                        <span class="home-cta">Ver</span>
+                    </a>
+                    <a href="mailto:soporte@waira.com?subject=Soporte%20para%20proveedores" class="home-card">
+                        <span class="home-icon" aria-hidden="true">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 5H20C21.1046 5 22 5.89543 22 7V17C22 18.1046 21.1046 19 20 19H4C2.89543 19 2 18.1046 2 17V7C2 5.89543 2.89543 5 4 5Z" stroke="currentColor" stroke-width="2" />
+                                <path d="M22 7L12 13L2 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <div class="home-info">
+                            <h3>Soporte</h3>
+                            <p>Contacta con el equipo de Waira para resolver dudas sobre tu cuenta.</p>
+                        </div>
+                        <span class="home-cta">Ayuda</span>
+                    </a>
+                </div>
+            </section>
 
-            <!-- Lista de servicios -->
-            <div class="servicios-wrapper" th:if="${servicios != null && !servicios.isEmpty()}">
-                <div class="servicio-card" th:each="s : ${servicios}">
-                    <div class="servicio-header">
-                        <h2 th:text="${s.nombre}">Nombre Servicio</h2>
-                        <span class="estado" th:text="${s.estado}">Activo</span>
-                    </div>
-                    <p class="servicio-desc" th:text="${s.descripcion}">Descripción breve del servicio.</p>
-                    <div class="servicio-actions">
-                        <a th:href="@{'/proveedor/servicios/' + ${s.id}}" class="btn btn-primary btn-sm">Ver</a>
-                        <a th:href="@{'/proveedor/servicios/' + ${s.id} + '/editar'}" class="btn btn-success btn-sm">Editar</a>
+            <section class="provider-servicios" th:if="${currentSection} == 'servicios'">
+                <header class="pc-header">
+                    <h1>Mis Servicios</h1>
+                    <a href="/proveedor/servicios/nuevo" class="btn btn-primary crear-servicio-btn">Crear servicio</a>
+                </header>
+
+                <div class="servicios-wrapper" th:if="${servicios != null && !servicios.isEmpty()}">
+                    <div class="servicio-card" th:each="s : ${servicios}" data-servicio-card>
+                        <div class="servicio-media"
+                             th:if="${s.imagenes != null && !s.imagenes.isEmpty()}"
+                             th:style="'background-image:url(' + ${s.imagenes[0].url} + ');'"
+                             th:attr="aria-label=${'Imagen principal de ' + s.nombreServicio}">
+                        </div>
+                        <div class="servicio-media servicio-media--placeholder" th:if="${s.imagenes == null || s.imagenes.isEmpty()}">
+                            <span>Sin imágenes</span>
+                        </div>
+                        <div class="servicio-header">
+                            <h2 th:text="${s.nombreServicio}">Nombre Servicio</h2>
+                            <span class="estado" th:text="${s.estado != null ? s.estado.nombreEstado : 'Sin estado'}">Estado</span>
+                        </div>
+                        <p class="servicio-desc" th:text="${s.descripcion}">Descripción breve del servicio.</p>
+                        <div class="servicio-meta">
+                            <strong class="servicio-price" th:text="${s.precio != null ? @currencyFormatter.cop(s.precio) : 'Precio no definido'}">Precio</strong>
+                        </div>
+                        <div class="servicio-stats">
+                            <span th:text="${s.vistas != null ? s.vistas + ' vistas' : '0 vistas'}">0 vistas</span>
+                            <span th:text="${s.diasDuracion != null ? s.diasDuracion + ' días' : 'Duración no definida'}">Duración</span>
+                        </div>
+                        <div class="servicio-actions">
+                                <button type="button"
+                                    class="btn btn-primary btn-sm"
+                                    data-preview-trigger
+                                    th:data-nombre="${s.nombreServicio}"
+                                    th:data-estado="${s.estado != null ? s.estado.nombreEstado : 'Sin estado'}"
+                                    th:data-descripcion="${s.descripcion}"
+                                    th:data-precio="${s.precio != null ? 'COP ' + s.precio.intValue() : 'Precio no definido'}"
+                                    th:data-duracion="${s.diasDuracion != null ? s.diasDuracion + ' días' : 'Duración no definida'}"
+                                    th:data-vistas="${s.vistas != null ? s.vistas + ' vistas' : '0 vistas'}"
+                                    th:data-ciudad="${s.direccion != null && s.direccion.ciudad != null ? s.direccion.ciudad : 'Ubicación pendiente'}"
+                                    th:data-direccion="${s.direccion != null && s.direccion.direccionFormateada != null && !s.direccion.direccionFormateada.isBlank() ? s.direccion.direccionFormateada : 'Sin dirección registrada'}"
+                                    th:data-imagenes="${s.imagenes != null && !s.imagenes.isEmpty() ? #strings.listJoin(s.imagenes.![url], '|') : ''}">
+                                Editar
+                            </button>
+                            <a href="/proveedor/servicios/nuevo" class="btn btn-secondary btn-sm">Crear otro</a>
+                        </div>
                     </div>
                 </div>
-            </div>
+                <div class="empty-servicios" data-empty-search th:if="${servicios != null && !servicios.isEmpty()}" hidden>
+                    <p>No encontramos servicios que coincidan con tu búsqueda.</p>
+                </div>
 
-            <!-- Estado vacío -->
-            <div class="empty-servicios" th:if="${servicios == null || servicios.isEmpty()}">
-                <p>Aún no has creado servicios.</p>
-                <a href="/proveedor/servicios/nuevo" class="btn btn-primary">Crear tu primer servicio</a>
-            </div>
+                <div class="empty-servicios"
+                     th:if="${tieneServicios and (servicios == null or servicios.isEmpty()) and hayFiltroActivo}">
+                    <p>No encontramos servicios que coincidan con tu búsqueda.</p>
+                    <a th:href="@{/dashboard(section='servicios')}" class="btn btn-secondary">Limpiar búsqueda</a>
+                </div>
+
+                <div class="empty-servicios" th:if="${!tieneServicios}">
+                    <p>Aún no has creado servicios.</p>
+                    <a href="/proveedor/servicios/nuevo" class="btn btn-primary">Crear tu primer servicio</a>
+                </div>
+            </section>
+
+            <section class="provider-ventas" th:if="${currentSection} == 'ventas'">
+                <header class="pc-header">
+                    <div>
+                        <p class="hero-pill">Ventas y reservas</p>
+                        <h1>Seguimiento comercial</h1>
+                    </div>
+                </header>
+
+                <div class="ventas-grid">
+                    <article class="ventas-card">
+                        <h2>Historial de ventas</h2>
+                        <p>Consulta los pagos confirmados y descarga reportes cuando lo necesites.</p>
+                        <div class="ventas-placeholder">Aún no hay registros de ventas.</div>
+                    </article>
+                    <article class="ventas-card">
+                        <h2>Historial de reservas confirmadas</h2>
+                        <p>Monitorea las reservas aprobadas y prepárate para la ejecución del servicio.</p>
+                        <div class="ventas-placeholder">No se encontraron reservas confirmadas.</div>
+                    </article>
+                    <article class="ventas-card">
+                        <h2>Reservas pendientes</h2>
+                        <p>Revisa solicitudes a la espera de confirmación para actuar oportunamente.</p>
+                        <div class="ventas-placeholder">Sin reservas pendientes por ahora.</div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="provider-estadisticas" th:if="${currentSection} == 'estadisticas'">
+                <header class="pc-header">
+                    <div>
+                        <p class="hero-pill">Estadísticas</p>
+                        <h1>Visión integral del proveedor</h1>
+                    </div>
+                </header>
+
+                <div class="estadisticas-resumen">
+                    <article class="estad-card">
+                        <p>Total ventas del mes</p>
+                        <strong>COP 0</strong>
+                        <span>Actualizado automáticamente</span>
+                    </article>
+                    <article class="estad-card">
+                        <p>Total ventas del año</p>
+                        <strong>COP 0</strong>
+                        <span>Incluye todos los paquetes</span>
+                    </article>
+                    <article class="estad-card">
+                        <p>Reservas confirmadas</p>
+                        <strong>0</strong>
+                        <span>Últimos 30 días</span>
+                    </article>
+                    <article class="estad-card">
+                        <p>Reservas pendientes</p>
+                        <strong>0</strong>
+                        <span>En espera de respuesta</span>
+                    </article>
+                    <article class="estad-card">
+                        <p>Ingresos generados</p>
+                        <strong>COP 0</strong>
+                        <span>Total histórico</span>
+                    </article>
+                    <article class="estad-card">
+                        <p>Paquetes activos / inactivos</p>
+                        <strong>0 / 0</strong>
+                        <span>Estado de publicación</span>
+                    </article>
+                </div>
+
+                <div class="estadisticas-panel">
+                    <div class="ranking-card">
+                        <header>
+                            <h2>Paquetes más vendidos</h2>
+                            <p>Ranking basado en las últimas confirmaciones.</p>
+                        </header>
+                        <div class="ranking-body">
+                            <div class="ranking-row ranking-head">
+                                <span>Paquete</span>
+                                <span>Ventas</span>
+                                <span>% participación</span>
+                                <span>Ingresos</span>
+                            </div>
+                            <div class="ranking-row ranking-empty">Aún no hay paquetes con ventas registradas.</div>
+                        </div>
+                    </div>
+
+                    <div class="filtros-card">
+                        <header>
+                            <h2>Estadísticas por fecha</h2>
+                            <p>Filtra resultados por rango, mes o año específico.</p>
+                        </header>
+                        <form class="filtros-form">
+                            <label>
+                                Rango de fechas
+                                <input type="date" />
+                                <input type="date" />
+                            </label>
+                            <label>
+                                Mes específico
+                                <select>
+                                    <option>Selecciona un mes</option>
+                                </select>
+                            </label>
+                            <label>
+                                Año específico
+                                <select>
+                                    <option>Selecciona un año</option>
+                                </select>
+                            </label>
+                            <button type="button" class="btn btn-primary">Aplicar filtros</button>
+                        </form>
+                        <div class="filtros-resultados">
+                            <div>
+                                <p>Ventas en el rango</p>
+                                <strong>0</strong>
+                            </div>
+                            <div>
+                                <p>Reservas en el rango</p>
+                                <strong>0</strong>
+                            </div>
+                            <div>
+                                <p>Cancelaciones</p>
+                                <strong>0</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="estadisticas-panel">
+                    <div class="comportamiento-card">
+                        <h2>Comportamiento de usuarios</h2>
+                        <ul>
+                            <li>Cantidad de usuarios que visitaron cada paquete</li>
+                            <li>Reservas confirmadas vs abandonadas</li>
+                            <li>Puntuación promedio por paquete</li>
+                            <li>Cantidad de reseñas recibidas</li>
+                        </ul>
+                    </div>
+                    <div class="calificaciones-card">
+                        <h2>Calificaciones y reseñas</h2>
+                        <div class="calificaciones-grid">
+                            <div>
+                                <p>Calificación promedio por paquete</p>
+                                <strong>—</strong>
+                            </div>
+                            <div>
+                                <p>Reseñas destacadas</p>
+                                <strong>—</strong>
+                            </div>
+                            <div>
+                                <p>Tendencia de puntuación</p>
+                                <strong>Estable</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ingresos-card">
+                    <h2>Ingresos</h2>
+                    <div class="ingresos-grid">
+                        <div>
+                            <p>Ingresos totales</p>
+                            <strong>COP 0</strong>
+                        </div>
+                        <div>
+                            <p>Ingresos por paquete</p>
+                            <strong>No hay datos</strong>
+                        </div>
+                        <div>
+                            <p>Ingresos por mes</p>
+                            <strong>No hay datos</strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
-    <script src="/js/activar-modales.js"></script>
+    <div class="preview-modal" data-preview-modal aria-hidden="true">
+        <div class="preview-modal__dialog" role="dialog" aria-modal="true">
+            <div class="preview-gallery">
+                <div class="preview-gallery__main" data-preview-image>
+                    <div class="preview-gallery__placeholder" data-preview-placeholder>
+                        Agrega imágenes para destacar tu servicio
+                    </div>
+                </div>
+            </div>
+            <div class="preview-details">
+                <div class="preview-details__header">
+                    <div>
+                        <p class="hero-pill" data-preview-city>Ubicación pendiente</p>
+                        <h2 data-preview-title>Nombre del servicio</h2>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm preview-modal__close" data-preview-close>Cerrar</button>
+                </div>
+                <div class="preview-details__meta">
+                    <span data-preview-state>Sin estado</span>
+                    <span data-preview-price>Precio no definido</span>
+                    <span data-preview-duration>Duración no definida</span>
+                    <span data-preview-views>0 vistas</span>
+                    <span data-preview-address>Dirección no disponible</span>
+                </div>
+                <div class="preview-details__body">
+                    <p data-preview-description>Describe tu servicio para verlo aquí.</p>
+                </div>
+                <div class="preview-details__footer">
+                    <button type="button" class="btn btn-primary" data-preview-close>Listo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/provider-dashboard.js"></script>
 </body>
 </html>

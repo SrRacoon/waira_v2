@@ -300,6 +300,24 @@ async function cambiarEstadoSolicitud(id, estado){
 
 async function cargarMetricasDashboard(){
     try {
+        const res = await fetch('/api/admin/metrics');
+        if (!res.ok) throw new Error('metrics response not ok');
+        const data = await res.json();
+        const formato = new Intl.NumberFormat('es-CO', { style:'currency', currency:'COP', maximumFractionDigits:0 });
+        setText('kpi-total-usuarios', data.totalUsuarios ?? '0');
+        setText('kpi-total-operadores', data.totalOperadores ?? '0');
+        setText('kpi-total-paquetes', data.totalPaquetes ?? '0');
+        setText('kpi-reservas-activas', data.reservasActivas ?? '0');
+        setText('kpi-ingresos-mes', formato.format(data.ingresosMes ?? 0));
+        return;
+    } catch (err) {
+        console.warn('Fallo API /api/admin/metrics, usando fallback', err);
+    }
+    await cargarMetricasDashboardFallback();
+}
+
+async function cargarMetricasDashboardFallback(){
+    try {
         const usuarios = await fetch('/api/admin/usuarios').then(r => r.ok ? r.json() : []).catch(() => []);
         const solicitudes = await fetch('/api/admin/solicitudes').then(r => r.ok ? r.json() : []).catch(() => []);
 

@@ -14,12 +14,15 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Table(name = "servicios")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Servicio {
@@ -63,6 +66,7 @@ public class Servicio {
 
 
     @OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL)
+    @OrderBy("idImagen ASC")
     private List<Imagen> imagenes;
 
 
@@ -82,4 +86,12 @@ public class Servicio {
     inverseJoinColumns = @JoinColumn(name = "id_categoria")
     )
     private List<Categoria> categorias;
+
+    @ManyToMany
+    @JoinTable(
+    name = "subcategorias_servicios",
+    joinColumns = @JoinColumn(name = "id_servicio"),
+    inverseJoinColumns = @JoinColumn(name = "id_subcategoria")
+    )
+    private List<Subcategoria> subcategorias;
 }

@@ -1,5 +1,10 @@
 package com.waira.waira_v2.entity;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.springframework.util.StringUtils;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,4 +30,11 @@ public class Direccion {
     private String complemento;
     private String barrio;
     private String ciudad;
+
+    public String getDireccionFormateada() {
+        String resultado = Stream.of(tipoVia, numero, complemento, barrio, ciudad)
+                .filter(StringUtils::hasText)
+                .collect(Collectors.joining(" "));
+        return resultado.isBlank() ? "" : resultado;
+    }
 }

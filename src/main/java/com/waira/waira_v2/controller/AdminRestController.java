@@ -1,6 +1,7 @@
 package com.waira.waira_v2.controller;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,12 +17,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.waira.waira_v2.dto.AdminMetricsDTO;
 import com.waira.waira_v2.entity.Estado;
 import com.waira.waira_v2.entity.SolicitudProveedor;
 import com.waira.waira_v2.entity.Usuario;
 import com.waira.waira_v2.repository.CompraRepository;
 import com.waira.waira_v2.repository.EstadoRepository;
+import com.waira.waira_v2.repository.ReservaRepository;
 import com.waira.waira_v2.repository.RolRepository;
+import com.waira.waira_v2.repository.ServicioRepository;
 import com.waira.waira_v2.repository.SolicitudProveedorRepository;
 import com.waira.waira_v2.repository.TipoIdentificacionRepository;
 import com.waira.waira_v2.repository.UsuarioRepository;
@@ -37,6 +41,12 @@ public class AdminRestController {
     private UsuarioRepository usuarioRepo;
 
     @Autowired
+    private ServicioRepository servicioRepo;
+
+    @Autowired
+    private ReservaRepository reservaRepo;
+
+    @Autowired
     private EstadoRepository estadoRepo;
 
     @Autowired
@@ -47,6 +57,9 @@ public class AdminRestController {
 
     @Autowired
     private CompraRepository compraRepo;
+
+    private static final List<String> ROLES_OPERADORES = List.of("PROVEEDOR", "OPERADOR", "OPERADOR_TURISTICO");
+    private static final List<String> ESTADOS_RESERVA_ACTIVOS = List.of("CONFIRMADA", "CONFIRMADO", "APROBADA", "APROBADO", "ACTIVA", "ACTIVO");
 
     @GetMapping("/solicitudes")
     public ResponseEntity<?> listarSolicitudes() {
@@ -79,7 +92,7 @@ public class AdminRestController {
             m.put("tipoIdentificacion", u.getTipoIdentificacion() != null ? u.getTipoIdentificacion().getNombreTipoDocumento() : null);
             m.put("razonSocial", u.getRazonSocial());
             m.put("estadoCuenta", u.getEstadoCuenta());
-            m.put("roles", u.getRoles() != null ? u.getRoles().stream().map(r -> r.getNombreRol()).collect(Collectors.toList()) : List.of());
+            m.put("roles", u.getRoles() != null ? u.getRoles().stream().map(r -> r.getNombreRol()).collect(Collectors.toList()) : Collections.emptyList());
             
             return m;
         }).collect(Collectors.toList());
@@ -169,6 +182,29 @@ public class AdminRestController {
 
     @GetMapping("/ingresos-mes")
     public ResponseEntity<?> ingresosDelMes() {
+        double total = calcularIngresosMesActual();
+        return ResponseEntity.ok(Map.of("ingresosMes", total));
+    }
+
+    @GetMapping("/metrics")
+    public ResponseEntity<AdminMetricsDTO> obtenerMetricasDashboard() {
+        long totalUsuarios = usuarioRepo.count();
+        long totalOperadores = usuarioRepo.countUsuariosPorRoles(ROLES_OPERADORES);
+        long totalPaquetes = servicioRepo.count();
+        long reservasActivas = reservaRepo.countReservasActivas(ESTADOS_RESERVA_ACTIVOS);
+        double ingresosMes = calcularIngresosMesActual();
+
+        AdminMetricsDTO dto = new AdminMetricsDTO(
+            totalUsuarios,
+            totalOperadores,
+            totalPaquetes,
+            reservasActivas,
+            ingresosMes
+        );
+        return ResponseEntity.ok(dto);
+    }
+
+    private double calcularIngresosMesActual() {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.DAY_OF_MONTH, 1);
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -179,7 +215,6 @@ public class AdminRestController {
         cal.add(Calendar.MONTH, 1);
         Date fin = cal.getTime();
         Double total = compraRepo.sumaIngresosConfirmadosEntre(inicio, fin);
-        if (total == null) total = 0.0;
-        return ResponseEntity.ok(Map.of("ingresosMes", total));
+        return total != null ? total : 0.0;
     }
 }
