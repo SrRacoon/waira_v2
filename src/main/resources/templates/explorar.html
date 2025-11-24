@@ -1,12 +1,39 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Explorar - Waira</title>
+  <link rel="stylesheet" href="/css/auth-styles.css" />
   <link rel="stylesheet" href="/css/explorar-styles.css" />
 </head>
 <body class="explorar-body">
+  <header class="explorar-header">
+    <div class="brand" aria-label="Waira">
+      <img src="/imgs/Waira.svg" alt="Logotipo de Waira" class="brand-logo" />
+    </div>
+    <nav class="header-nav" aria-label="Navegación principal">
+      <a href="#" class="nav-link is-active">Viajes</a>
+      <a href="#" class="nav-link">Buzón</a>
+      <a href="#" class="nav-link">Perfil</a>
+      <a href="#" class="nav-link">Más</a>
+    </nav>
+    <div class="header-actions">
+      <button type="button" class="btn btn-outline" id="btn-crear-anuncio">Crear anuncio</button>
+      <button type="button" class="btn btn-primary">Ingresar</button>
+    </div>
+  </header>
+
+  <section class="explorar-hero" aria-label="Muro de viajes">
+    <div class="hero-inner">
+      <div class="hero-copy solo">
+        <p class="hero-subtitle">Más personal. Más útil. Más conectado.</p>
+        <h1 id="explorar-heading">Bienvenido a tu muro de viajes</h1>
+        <p>Descubre servicios y experiencias que coinciden con tus gustos.</p>
+      </div>
+    </div>
+  </section>
+
   <main class="explorar-shell" aria-labelledby="explorar-heading">
     <div class="explorar-grid">
       <aside class="filtros-panel" aria-label="Panel de filtros">
@@ -26,23 +53,14 @@
           <div class="field">
             <label>Precio (COP)</label>
             <div class="precio-inputs">
-              <input type="number" id="filter-precio-min" placeholder="Mín" min="0" />
+              <input type="text" id="filter-precio-min" class="currency-input" inputmode="numeric" placeholder="Mín" />
               <span>-</span>
-              <input type="number" id="filter-precio-max" placeholder="Máx" min="0" />
+              <input type="text" id="filter-precio-max" class="currency-input" inputmode="numeric" placeholder="Máx" />
             </div>
           </div>
         </section>
 
-        <section class="surface tree-panel">
-          <div class="tree-panel__header">
-            <div>
-              <p class="panel-label">Navega por jerarquías</p>
-              <h2 id="explorar-heading">Categorías activas</h2>
-            </div>
-            <button type="button" class="btn btn-outline" id="btn-reset-filtros">Limpiar</button>
-          </div>
-          <div id="explorar-tree" class="tree-panel__body" aria-live="polite"></div>
-        </section>
+        <button type="button" class="btn btn-outline filtros-reset" id="btn-reset-filtros" hidden>Limpiar filtros</button>
       </aside>
 
       <section class="surface resultados-panel">
@@ -67,15 +85,22 @@
 
         <section class="grid-section">
           <div id="grid-servicios" class="grid-servicios" aria-live="polite"></div>
+          <nav id="paginacion-servicios" class="paginacion" aria-label="Paginación de servicios" hidden>
+            <button type="button" class="paginacion__control" data-action="prev" aria-label="Anterior" disabled>‹</button>
+            <div class="paginacion__pages" role="list"></div>
+            <button type="button" class="paginacion__control" data-action="next" aria-label="Siguiente" disabled>›</button>
+          </nav>
           <div id="sin-resultados" class="sin-resultados" hidden>
             <p>No se encontraron servicios para los filtros actuales.</p>
-            <button type="button" class="btn btn-outline" id="btn-sin-resultados">Limpiar filtros</button>
+            <button type="button" class="btn btn-outline" id="btn-sin-resultados" hidden>Limpiar filtros</button>
           </div>
         </section>
       </section>
     </div>
   </main>
 
+  <div th:replace="~{fragments/vistas_auth :: modales_auth}"></div>
+  <script src="/js/activar-modales.js"></script>
   <script src="/js/explorar.js"></script>
 </body>
 </html>

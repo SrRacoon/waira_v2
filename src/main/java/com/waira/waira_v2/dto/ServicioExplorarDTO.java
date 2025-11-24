@@ -22,4 +22,6 @@ public class ServicioExplorarDTO {
     private List<String> subcategorias = new ArrayList<>();
     private String imagenDestacada;
     private String estado;
+    private Double calificacionPromedio;
+    private Long totalResenas;
 }

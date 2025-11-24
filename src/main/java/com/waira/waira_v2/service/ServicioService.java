@@ -36,6 +36,7 @@ import com.waira.waira_v2.repository.CategoriaRepository;
 import com.waira.waira_v2.repository.DireccionRepository;
 import com.waira.waira_v2.repository.EstadoRepository;
 import com.waira.waira_v2.repository.ImagenRepository;
+import com.waira.waira_v2.repository.ResenaRepository;
 import com.waira.waira_v2.repository.ServicioRepository;
 import com.waira.waira_v2.repository.SubcategoriaRepository;
 
@@ -68,6 +69,9 @@ public class ServicioService {
 
     @Autowired
     private SubcategoriaRepository subcategoriaRepository;
+
+    @Autowired
+    private ResenaRepository resenaRepository;
 
     @Transactional
     public Servicio crearServicio(Usuario usuario, CrearServicioDTO dto, List<MultipartFile> imagenes) {
@@ -254,13 +258,14 @@ public class ServicioService {
     @Transactional(readOnly = true)
     public List<ServicioExplorarDTO> construirCatalogoServicios() {
         List<Servicio> servicios = servicioRepository.findAll();
+        Map<Integer, RatingStats> ratingStats = construirMapaRatings();
         return servicios.stream()
                 .filter(this::esServicioDisponible)
-                .map(this::mapearServicioExplorar)
+                .map(servicio -> mapearServicioExplorar(servicio, ratingStats))
                 .collect(Collectors.toList());
     }
 
-    private ServicioExplorarDTO mapearServicioExplorar(Servicio servicio) {
+    private ServicioExplorarDTO mapearServicioExplorar(Servicio servicio, Map<Integer, RatingStats> ratingStats) {
         ServicioExplorarDTO dto = new ServicioExplorarDTO();
         dto.setId(servicio.getIdServicio());
         dto.setNombre(servicio.getNombreServicio());
@@ -298,6 +303,12 @@ public class ServicioService {
 
         List<Imagen> imagenes = servicio.getImagenes() == null ? Collections.emptyList() : servicio.getImagenes();
         dto.setImagenDestacada(imagenes.isEmpty() ? null : imagenes.get(0).getUrl());
+
+        RatingStats stats = ratingStats.get(servicio.getIdServicio());
+        if (stats != null) {
+            dto.setCalificacionPromedio(stats.promedio);
+            dto.setTotalResenas(stats.total);
+        }
         return dto;
     }
 
@@ -322,6 +333,34 @@ public class ServicioService {
             conteo.put(id, total);
         }
         return conteo;
+    }
+
+    private Map<Integer, RatingStats> construirMapaRatings() {
+        Map<Integer, RatingStats> mapa = new HashMap<>();
+        List<Object[]> filas = resenaRepository.promedioYTotalPorServicio();
+        if (filas == null) {
+            return mapa;
+        }
+        for (Object[] fila : filas) {
+            if (fila == null || fila.length < 3 || fila[0] == null) {
+                continue;
+            }
+            Integer idServicio = ((Number) fila[0]).intValue();
+            double promedio = fila[1] != null ? ((Number) fila[1]).doubleValue() : 0d;
+            long total = fila[2] != null ? ((Number) fila[2]).longValue() : 0L;
+            mapa.put(idServicio, new RatingStats(promedio, total));
+        }
+        return mapa;
+    }
+
+    private static final class RatingStats {
+        private final double promedio;
+        private final long total;
+
+        private RatingStats(double promedio, long total) {
+            this.promedio = promedio;
+            this.total = total;
+        }
     }
 
     public ProveedorStatsDTO calcularStatsProveedor(List<Servicio> servicios) {

@@ -60,6 +60,7 @@ public class AdminRestController {
 
     private static final List<String> ROLES_OPERADORES = List.of("PROVEEDOR", "OPERADOR", "OPERADOR_TURISTICO");
     private static final List<String> ESTADOS_RESERVA_ACTIVOS = List.of("CONFIRMADA", "CONFIRMADO", "APROBADA", "APROBADO", "ACTIVA", "ACTIVO");
+    private static final double PLATFORM_FEE_PERCENTAGE = 0.03;
 
     @GetMapping("/solicitudes")
     public ResponseEntity<?> listarSolicitudes() {
@@ -215,6 +216,6 @@ public class AdminRestController {
         cal.add(Calendar.MONTH, 1);
         Date fin = cal.getTime();
         Double total = compraRepo.sumaIngresosConfirmadosEntre(inicio, fin);
-        return total != null ? total : 0.0;
+        return total != null ? total * PLATFORM_FEE_PERCENTAGE : 0.0;
     }
 }

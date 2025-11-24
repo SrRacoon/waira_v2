@@ -195,6 +195,42 @@ public class AuthController {
         ));
     }
 
+    @GetMapping("/estado")
+    public ResponseEntity<?> estado(HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuario == null) {
+            return ResponseEntity.ok(Map.of(
+                "autenticado", false,
+                "esProveedor", false,
+                "esAdmin", false,
+                "urlCrearServicio", "/proveedor/servicios/nuevo"
+            ));
+        }
+
+        boolean esAdmin = false;
+        boolean esProveedor = false;
+        if (usuario.getRoles() != null) {
+            for (var rol : usuario.getRoles()) {
+                if (rol == null || rol.getNombreRol() == null) continue;
+                String upper = rol.getNombreRol().trim().toUpperCase();
+                if (upper.contains("ADMINISTRADOR")) {
+                    esAdmin = true;
+                }
+                if (esRolProveedor(upper)) {
+                    esProveedor = true;
+                }
+            }
+        }
+
+        return ResponseEntity.ok(Map.of(
+            "autenticado", true,
+            "esProveedor", esProveedor,
+            "esAdmin", esAdmin,
+            "nombre", usuario.getNombres(),
+            "urlCrearServicio", "/proveedor/servicios/nuevo"
+        ));
+    }
+
     private boolean esRolProveedor(String nombreNormalizado) {
         if (nombreNormalizado == null) return false;
         return nombreNormalizado.contains("PROVEEDOR") || nombreNormalizado.contains("OPERADOR");
