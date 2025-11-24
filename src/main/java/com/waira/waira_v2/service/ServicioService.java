@@ -98,63 +98,17 @@ public class ServicioService {
             throw new IllegalArgumentException("La duración mínima es de un día");
         }
 
-        Direccion direccionServicio = construirDireccion(dto);
+        Direccion direccionServicio = construirDireccion(dto, null);
 
         Estado estado = estadoRepository
             .findByNombreEstadoAndTipoEstado("DISPONIBLE", "SERVICIO")
             .orElseThrow(() -> new IllegalArgumentException("Estado DISPONIBLE SERVICIO no definido"));
 
-        List<MultipartFile> imagenesValidas = imagenes == null ? Collections.emptyList() : imagenes.stream()
-            .filter(file -> file != null && !file.isEmpty())
-            .collect(Collectors.toList());
+        List<MultipartFile> imagenesValidas = filtrarImagenes(imagenes);
+        validarImagenes(imagenesValidas, true);
 
-        if (imagenesValidas.size() < MIN_IMAGES) {
-            throw new IllegalArgumentException("Debes subir al menos " + MIN_IMAGES + " imágenes por servicio");
-        }
-        if (imagenesValidas.size() > MAX_IMAGES) {
-            throw new IllegalArgumentException("Solo puedes subir hasta " + MAX_IMAGES + " imágenes por servicio");
-        }
-
-        for (MultipartFile file : imagenesValidas) {
-            if (file.getSize() > MAX_IMAGE_SIZE) {
-                throw new IllegalArgumentException("Cada imagen debe pesar máximo 5MB");
-            }
-            String contentType = file.getContentType();
-            boolean tipoPermitido = contentType != null && ALLOWED_CONTENT_TYPES.stream()
-                    .anyMatch(permitido -> permitido.equalsIgnoreCase(contentType));
-            if (!tipoPermitido) {
-                throw new IllegalArgumentException("Solo se permiten imágenes JPG o PNG");
-            }
-        }
-
-        List<Integer> categoriasIds = dto.getCategoriasIds() != null ? dto.getCategoriasIds() : Collections.emptyList();
-        if (categoriasIds.isEmpty()) {
-            throw new IllegalArgumentException("Selecciona al menos una categoría para tu servicio");
-        }
-        List<Categoria> categoriasSeleccionadas = categoriaRepository.findAllById(categoriasIds);
-        if (categoriasSeleccionadas.size() != new HashSet<>(categoriasIds).size()) {
-            throw new IllegalArgumentException("Alguna de las categorías seleccionadas no existe");
-        }
-
-        List<Integer> subcategoriasIds = dto.getSubcategoriasIds() != null ? dto.getSubcategoriasIds() : Collections.emptyList();
-        List<Subcategoria> subcategoriasSeleccionadas = subcategoriasIds.isEmpty()
-                ? Collections.emptyList()
-                : subcategoriaRepository.findAllById(subcategoriasIds);
-
-        if (!subcategoriasIds.isEmpty() && subcategoriasSeleccionadas.size() != new HashSet<>(subcategoriasIds).size()) {
-            throw new IllegalArgumentException("Alguna de las subcategorías seleccionadas no existe");
-        }
-
-        if (!subcategoriasSeleccionadas.isEmpty()) {
-            Set<Integer> categoriasPermitidas = categoriasSeleccionadas.stream()
-                    .map(Categoria::getIdCategoria)
-                    .collect(Collectors.toSet());
-            boolean todasValidas = subcategoriasSeleccionadas.stream()
-                    .allMatch(sub -> sub.getCategoria() != null && categoriasPermitidas.contains(sub.getCategoria().getIdCategoria()));
-            if (!todasValidas) {
-                throw new IllegalArgumentException("Las subcategorías deben pertenecer a las categorías seleccionadas");
-            }
-        }
+        List<Categoria> categoriasSeleccionadas = cargarCategorias(dto.getCategoriasIds());
+        List<Subcategoria> subcategoriasSeleccionadas = cargarSubcategorias(dto.getSubcategoriasIds(), categoriasSeleccionadas);
 
         Servicio servicio = new Servicio();
         servicio.setUsuario(usuario);
@@ -188,7 +142,7 @@ public class ServicioService {
         return guardado;
     }
 
-    private Direccion construirDireccion(CrearServicioDTO dto) {
+    private Direccion construirDireccion(CrearServicioDTO dto, Direccion existente) {
         if (isBlank(dto.getTipoVia())) {
             throw new IllegalArgumentException("Ingresa un tipo de vía (ej. Carrera, Calle, Avenida)");
         }
@@ -202,7 +156,7 @@ public class ServicioService {
             throw new IllegalArgumentException("Ingresa la ciudad de prestación del servicio");
         }
 
-        Direccion direccion = new Direccion();
+        Direccion direccion = existente != null ? existente : new Direccion();
         direccion.setTipoVia(dto.getTipoVia().trim());
         direccion.setNumero(dto.getNumero().trim());
         direccion.setComplemento(isBlank(dto.getComplemento()) ? null : dto.getComplemento().trim());
@@ -215,8 +169,168 @@ public class ServicioService {
         return value == null || value.trim().isEmpty();
     }
 
+    private List<MultipartFile> filtrarImagenes(List<MultipartFile> imagenes) {
+        return imagenes == null
+                ? Collections.emptyList()
+                : imagenes.stream()
+                        .filter(file -> file != null && !file.isEmpty())
+                        .collect(Collectors.toList());
+    }
+
+    private void validarImagenes(List<MultipartFile> imagenesValidas, boolean obligatorias) {
+        int count = imagenesValidas != null ? imagenesValidas.size() : 0;
+        if (obligatorias && count < MIN_IMAGES) {
+            throw new IllegalArgumentException("Debes subir al menos " + MIN_IMAGES + " imágenes por servicio");
+        }
+        if (!obligatorias && count > 0 && count < MIN_IMAGES) {
+            throw new IllegalArgumentException("Cuando reemplazas imágenes debes subir al menos " + MIN_IMAGES + " archivos.");
+        }
+        if (count > MAX_IMAGES) {
+            throw new IllegalArgumentException("Solo puedes subir hasta " + MAX_IMAGES + " imágenes por servicio");
+        }
+
+        if (count == 0 || imagenesValidas == null) {
+            return;
+        }
+
+        for (MultipartFile file : imagenesValidas) {
+            if (file.getSize() > MAX_IMAGE_SIZE) {
+                throw new IllegalArgumentException("Cada imagen debe pesar máximo 5MB");
+            }
+            String contentType = file.getContentType();
+            boolean tipoPermitido = contentType != null && ALLOWED_CONTENT_TYPES.stream()
+                    .anyMatch(permitido -> permitido.equalsIgnoreCase(contentType));
+            if (!tipoPermitido) {
+                throw new IllegalArgumentException("Solo se permiten imágenes JPG o PNG");
+            }
+        }
+    }
+
+    private List<Categoria> cargarCategorias(List<Integer> categoriasIds) {
+        List<Integer> ids = categoriasIds != null ? categoriasIds : Collections.emptyList();
+        if (ids.isEmpty()) {
+            throw new IllegalArgumentException("Selecciona al menos una categoría para tu servicio");
+        }
+        List<Categoria> categorias = categoriaRepository.findAllById(ids);
+        if (categorias.size() != new HashSet<>(ids).size()) {
+            throw new IllegalArgumentException("Alguna de las categorías seleccionadas no existe");
+        }
+        return categorias;
+    }
+
+    private List<Subcategoria> cargarSubcategorias(List<Integer> subcategoriasIds, List<Categoria> categoriasSeleccionadas) {
+        List<Integer> ids = subcategoriasIds != null ? subcategoriasIds : Collections.emptyList();
+        if (ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Subcategoria> subcategorias = subcategoriaRepository.findAllById(ids);
+        if (subcategorias.size() != new HashSet<>(ids).size()) {
+            throw new IllegalArgumentException("Alguna de las subcategorías seleccionadas no existe");
+        }
+
+        if (!subcategorias.isEmpty()) {
+            Set<Integer> categoriasPermitidas = categoriasSeleccionadas.stream()
+                    .map(Categoria::getIdCategoria)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+            boolean todasValidas = subcategorias.stream()
+                    .allMatch(sub -> sub.getCategoria() != null && categoriasPermitidas.contains(sub.getCategoria().getIdCategoria()));
+            if (!todasValidas) {
+                throw new IllegalArgumentException("Las subcategorías deben pertenecer a las categorías seleccionadas");
+            }
+        }
+        return subcategorias;
+    }
+
     public List<Servicio> listarServiciosProveedor(Usuario usuario) {
         return servicioRepository.findByUsuario(usuario);
+    }
+
+    @Transactional(readOnly = true)
+    public Servicio obtenerServicioProveedorPorId(Usuario usuario, Integer servicioId) {
+        return obtenerServicioPropietarioOrThrow(usuario, servicioId);
+    }
+
+    @Transactional
+    public Servicio actualizarServicio(Usuario usuario, Integer servicioId, CrearServicioDTO dto, List<MultipartFile> nuevasImagenes) {
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario requerido");
+        }
+        if (dto == null) {
+            throw new IllegalArgumentException("Datos del servicio requeridos");
+        }
+        if (servicioId == null) {
+            throw new IllegalArgumentException("Servicio inválido");
+        }
+        if (isBlank(dto.getNombreServicio())) {
+            throw new IllegalArgumentException("Nombre de servicio requerido");
+        }
+        if (isBlank(dto.getDescripcion())) {
+            throw new IllegalArgumentException("Descripción requerida");
+        }
+        if (dto.getPrecio() == null || dto.getPrecio() <= 0) {
+            throw new IllegalArgumentException("El precio debe ser mayor a cero");
+        }
+        if (dto.getDiasDuracion() == null || dto.getDiasDuracion() <= 0) {
+            throw new IllegalArgumentException("La duración mínima es de un día");
+        }
+
+        Servicio servicio = obtenerServicioPropietarioOrThrow(usuario, servicioId);
+
+        Direccion direccionActualizada = construirDireccion(dto, servicio.getDireccion());
+        List<MultipartFile> imagenesValidas = filtrarImagenes(nuevasImagenes);
+        validarImagenes(imagenesValidas, false);
+        List<Categoria> categoriasSeleccionadas = cargarCategorias(dto.getCategoriasIds());
+        List<Subcategoria> subcategoriasSeleccionadas = cargarSubcategorias(dto.getSubcategoriasIds(), categoriasSeleccionadas);
+
+        servicio.setNombreServicio(dto.getNombreServicio().trim());
+        servicio.setDescripcion(dto.getDescripcion().trim());
+        servicio.setPrecio(dto.getPrecio());
+        servicio.setDiasDuracion(dto.getDiasDuracion());
+        servicio.setDireccion(direccionActualizada);
+        servicio.setCategorias(new ArrayList<>(categoriasSeleccionadas));
+        servicio.setSubcategorias(new ArrayList<>(subcategoriasSeleccionadas));
+
+        Servicio actualizado = servicioRepository.save(servicio);
+
+        if (!imagenesValidas.isEmpty()) {
+            reemplazarImagenes(actualizado, imagenesValidas);
+        }
+
+        return actualizado;
+    }
+
+    @Transactional
+    public void eliminarServicio(Usuario usuario, Integer servicioId) {
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario requerido");
+        }
+        if (servicioId == null) {
+            throw new IllegalArgumentException("Servicio inválido");
+        }
+
+        Servicio servicio = obtenerServicioPropietarioOrThrow(usuario, servicioId);
+
+        List<Imagen> actuales = servicio.getImagenes();
+        if (actuales != null && !actuales.isEmpty()) {
+            eliminarArchivosImagenes(actuales);
+            imagenRepository.deleteAll(actuales);
+            if (servicio.getImagenes() != null) {
+                servicio.getImagenes().clear();
+            }
+        }
+
+        if (servicio.getMetodosPago() != null) {
+            servicio.getMetodosPago().clear();
+        }
+        if (servicio.getCategorias() != null) {
+            servicio.getCategorias().clear();
+        }
+        if (servicio.getSubcategorias() != null) {
+            servicio.getSubcategorias().clear();
+        }
+
+        servicioRepository.delete(servicio);
     }
 
     @Transactional(readOnly = true)
@@ -225,6 +339,60 @@ public class ServicioService {
         payload.setCategorias(construirArbolCategorias());
         payload.setServicios(construirCatalogoServicios());
         return payload;
+    }
+
+    private void reemplazarImagenes(Servicio servicio, List<MultipartFile> nuevasImagenes) {
+        List<Imagen> actuales = servicio.getImagenes() == null ? Collections.emptyList() : new ArrayList<>(servicio.getImagenes());
+        if (!actuales.isEmpty()) {
+            eliminarArchivosImagenes(actuales);
+            imagenRepository.deleteAll(actuales);
+            if (servicio.getImagenes() != null) {
+                servicio.getImagenes().clear();
+            }
+        }
+
+        List<Imagen> nuevasEntidades = nuevasImagenes.stream()
+                .map(file -> {
+                    String url = fileStorageService.saveServicioImage(file);
+                    Imagen img = new Imagen();
+                    img.setServicio(servicio);
+                    img.setUrl(url);
+                    return img;
+                })
+                .collect(Collectors.toList());
+
+        imagenRepository.saveAll(nuevasEntidades);
+        servicio.setImagenes(new ArrayList<>(nuevasEntidades));
+    }
+
+    private void eliminarArchivosImagenes(List<Imagen> imagenes) {
+        imagenes.stream()
+                .filter(Objects::nonNull)
+            .map(Imagen::getUrl)
+            .filter(Objects::nonNull)
+                .forEach(fileStorageService::deleteServicioImage);
+    }
+
+    private Servicio obtenerServicioPropietarioOrThrow(Usuario usuario, Integer servicioId) {
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario requerido");
+        }
+        if (servicioId == null) {
+            throw new IllegalArgumentException("Servicio inválido");
+        }
+        Servicio servicio = servicioRepository.findById(servicioId)
+                .orElseThrow(() -> new IllegalArgumentException("Servicio no encontrado"));
+        if (!esPropietario(usuario, servicio)) {
+            throw new IllegalArgumentException("No tienes permisos para administrar este servicio");
+        }
+        return servicio;
+    }
+
+    private boolean esPropietario(Usuario usuario, Servicio servicio) {
+        if (usuario == null || servicio == null || servicio.getUsuario() == null) {
+            return false;
+        }
+        return Objects.equals(servicio.getUsuario().getIdUsuario(), usuario.getIdUsuario());
     }
 
     @Transactional(readOnly = true)

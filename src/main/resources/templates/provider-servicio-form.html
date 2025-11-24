@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Nuevo Servicio | Proveedor</title>
+	<title th:text="${editMode} ? 'Editar Servicio | Proveedor' : 'Nuevo Servicio | Proveedor'">Nuevo Servicio | Proveedor</title>
 	<link rel="stylesheet" href="/css/provider-styles.css" />
 	<link rel="stylesheet" href="/css/admin-styles.css" />
 </head>
@@ -19,14 +19,19 @@
 	<main class="crear-servicio-main">
 		<section class="crear-servicio-section">
 			<header class="crear-servicio-header">
-				<p class="hero-pill">Nuevo servicio</p>
-				<h1>Presenta tu experiencia como proveedor</h1>
-				<p>Comparte detalles, imágenes y precio para que el equipo de Waira publique tu servicio.</p>
+				<p class="hero-pill" th:text="${editMode} ? 'Editar servicio' : 'Nuevo servicio'">Nuevo servicio</p>
+				<h1 th:text="${editMode} ? 'Actualiza la información de tu experiencia' : 'Presenta tu experiencia como proveedor'">Presenta tu experiencia como proveedor</h1>
+				<p th:text="${editMode} ? 'Ajusta datos, categorías e imágenes cuando necesites mantener tu oferta al día.' : 'Comparte detalles, imágenes y precio para que el equipo de Waira publique tu servicio.'">Comparte detalles, imágenes y precio para que el equipo de Waira publique tu servicio.</p>
 			</header>
 
 			<div th:if="${error}" class="form-error" th:text="${error}"></div>
 
-			<form th:action="@{/proveedor/servicios}" th:object="${crearServicioDTO}" method="post" class="crear-servicio-form" enctype="multipart/form-data">
+			<form th:action="${editMode} ? @{/proveedor/servicios/{id}/actualizar(id=${servicioId})} : @{/proveedor/servicios}"
+				  th:object="${crearServicioDTO}"
+				  method="post"
+				  class="crear-servicio-form"
+				  enctype="multipart/form-data"
+				  th:attr="data-requires-images=${!editMode}">
 				<div class="form-grid">
 					<div class="form-group">
 						<label for="nombreServicio">Nombre del servicio</label>
@@ -101,13 +106,13 @@
 
 				<div class="form-group">
 					<label for="imagenes">Fotografías del servicio</label>
-					<input type="file" id="imagenes" name="imagenes" accept="image/jpeg,image/png" multiple required class="file-input-hidden" />
+					<input type="file" id="imagenes" name="imagenes" accept="image/jpeg,image/png" multiple class="file-input-hidden" th:attr="required=${!editMode}" />
 					<button type="button" class="btn btn-orange file-upload-trigger" data-file-trigger>Cargar imágenes</button>
-					<p class="input-help" data-imagenes-help>Selecciona entre 2 y 10 imágenes JPG o PNG (máx. 5 MB cada una).</p>
+					<p class="input-help" data-imagenes-help th:text="${editMode} ? 'Puedes reemplazar tus imágenes subiendo una nueva selección (2 a 10 archivos, máx. 5 MB c/u).' : 'Selecciona entre 2 y 10 imágenes JPG o PNG (máx. 5 MB cada una).'}">Selecciona entre 2 y 10 imágenes JPG o PNG (máx. 5 MB cada una).</p>
 				</div>
 
 				<div class="form-actions">
-					<button type="submit" class="btn btn-primary">Publicar servicio</button>
+					<button type="submit" class="btn btn-primary" th:text="${editMode} ? 'Guardar cambios' : 'Publicar servicio'">Publicar servicio</button>
 					<button type="button" class="btn btn-orange" data-cancel-btn>Cancelar</button>
 				</div>
 			</form>
@@ -117,10 +122,10 @@
 	<div class="modal" id="confirmModal" aria-hidden="true">
 		<div class="modal-dialog" role="dialog" aria-modal="true">
 			<header class="modal-header">
-				<h2>Confirmar publicación</h2>
+				<h2 th:text="${editMode} ? 'Confirmar actualización' : 'Confirmar publicación'">Confirmar publicación</h2>
 			</header>
 			<div class="modal-body">
-				<p>Revisaremos la información antes de publicar tu servicio en Waira. ¿Deseas continuar?</p>
+				<p th:text="${editMode} ? 'Guardaremos los cambios y actualizaremos la publicación al instante. ¿Deseas continuar?' : 'Revisaremos la información antes de publicar tu servicio en Waira. ¿Deseas continuar?'}">Revisaremos la información antes de publicar tu servicio en Waira. ¿Deseas continuar?</p>
 			</div>
 			<div class="modal-actions">
 				<button type="button" class="btn btn-orange" id="modalCancel">Volver</button>

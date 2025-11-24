@@ -146,9 +146,47 @@
         });
     };
 
+    const initDeleteActions = () => {
+        document.addEventListener('click', async (event) => {
+            const trigger = event.target.closest('[data-delete-servicio]');
+            if (!trigger) {
+                return;
+            }
+            const servicioId = trigger.dataset.deleteServicio;
+            if (!servicioId) {
+                return;
+            }
+            const nombre = trigger.dataset.servicioNombre || 'este servicio';
+            const confirmed = window.confirm(`¿Eliminar "${nombre}" de forma permanente? Esta acción no se puede deshacer.`);
+            if (!confirmed) {
+                return;
+            }
+            const originalLabel = trigger.textContent;
+            trigger.disabled = true;
+            trigger.textContent = 'Eliminando...';
+            try {
+                const response = await fetch(`/proveedor/servicios/${servicioId}`, {
+                    method: 'DELETE',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    credentials: 'same-origin'
+                });
+                if (!response.ok) {
+                    const message = await response.text();
+                    throw new Error(message || 'No se pudo eliminar el servicio');
+                }
+                window.location.reload();
+            } catch (error) {
+                trigger.disabled = false;
+                trigger.textContent = originalLabel;
+                alert(error.message || 'Ocurrió un error inesperado');
+            }
+        });
+    };
+
     const onReady = () => {
         initSearchFilter();
         initPreviewModal();
+        initDeleteActions();
     };
 
     if (document.readyState === 'loading') {

@@ -2,6 +2,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.querySelector('.crear-servicio-form');
         if (!form) return;
+        const requiresImages = form.dataset.requiresImages !== 'false';
 
         const precioHidden = document.getElementById('precio');
         const precioDisplay = document.getElementById('precioDisplay');
@@ -39,12 +40,20 @@
         const actualizarLeyendaImagenes = () => {
             if (!imagenesHelp || !imagenesInput) return;
             const count = imagenesInput.files?.length || 0;
+            if (!requiresImages && count === 0) {
+                imagenesHelp.textContent = 'Mantendrás tus imágenes actuales. Si deseas reemplazarlas, carga entre 2 y 10 archivos (máx. 5 MB c/u).';
+                return;
+            }
             imagenesHelp.textContent = `Selecciona entre 2 y 10 imágenes JPG o PNG (máx. 5 MB c/u). Actualmente: ${count} seleccionadas.`;
         };
 
         const validarImagenes = () => {
             if (!imagenesInput) return true;
             const count = imagenesInput.files?.length || 0;
+            if (!requiresImages && count === 0) {
+                imagenesInput.setCustomValidity('');
+                return true;
+            }
             if (count < 2 || count > 10) {
                 imagenesInput.setCustomValidity('Selecciona entre 2 y 10 imágenes para continuar.');
                 return false;

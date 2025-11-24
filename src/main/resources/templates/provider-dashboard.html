@@ -210,7 +210,7 @@
                         </div>
                         <div class="servicio-actions">
                                 <button type="button"
-                                    class="btn btn-primary btn-sm"
+                                    class="btn btn-secondary btn-sm"
                                     data-preview-trigger
                                     th:data-nombre="${s.nombreServicio}"
                                     th:data-estado="${s.estado != null ? s.estado.nombreEstado : 'Sin estado'}"
@@ -221,9 +221,17 @@
                                     th:data-ciudad="${s.direccion != null && s.direccion.ciudad != null ? s.direccion.ciudad : 'Ubicación pendiente'}"
                                     th:data-direccion="${s.direccion != null && s.direccion.direccionFormateada != null && !s.direccion.direccionFormateada.isBlank() ? s.direccion.direccionFormateada : 'Sin dirección registrada'}"
                                     th:data-imagenes="${s.imagenes != null && !s.imagenes.isEmpty() ? #strings.listJoin(s.imagenes.![url], '|') : ''}">
-                                Editar
+                                Ver
                             </button>
-                            <a href="/proveedor/servicios/nuevo" class="btn btn-secondary btn-sm">Crear otro</a>
+                            <a th:href="@{/proveedor/servicios/{id}/editar(id=${s.idServicio})}"
+                               class="btn btn-primary btn-sm">Editar</a>
+                            <button type="button"
+                                    class="btn btn-danger btn-sm"
+                                    data-delete-servicio
+                                    th:data-delete-servicio="${s.idServicio}"
+                                    th:data-servicio-nombre="${s.nombreServicio}">
+                                Eliminar
+                            </button>
                         </div>
                     </div>
                 </div>
