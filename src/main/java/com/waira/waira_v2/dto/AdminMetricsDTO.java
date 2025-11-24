@@ -12,5 +12,5 @@ public class AdminMetricsDTO {
     private long totalOperadores;
     private long totalPaquetes;
     private long reservasActivas;
-    private double ingresosMes;
+    private long comprasCompletadas;
 }

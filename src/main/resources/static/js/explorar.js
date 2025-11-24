@@ -487,7 +487,7 @@
           ${servicio.subcategorias.slice(0,3).map(nombre => `<span class="chip">${escapeHtml(nombre)}</span>`).join('')}
         </div>
         <div class="actions">
-          <button class="btn btn-primary">Ver detalle</button>
+          <a class="btn btn-primary" href="/servicios/${servicio.id}">Ver detalle</a>
         </div>
       </div>
     `;

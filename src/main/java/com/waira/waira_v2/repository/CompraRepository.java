@@ -10,10 +10,10 @@ import com.waira.waira_v2.entity.Compra;
 
 public interface CompraRepository extends JpaRepository<Compra, Integer> {
 
-        @Query("SELECT COALESCE(SUM(r.cantidadPersonas * r.precioUnitario), 0) " +
-            "FROM Compra c JOIN c.reserva r JOIN c.estado e " +
-            "WHERE UPPER(e.nombreEstado) = 'CONFIRMADA' " +
-            "AND UPPER(e.tipoEstado) = 'COMPRA' " +
+        @Query("SELECT COALESCE(COUNT(c), 0) " +
+            "FROM Compra c JOIN c.estado e " +
+            "WHERE UPPER(e.tipoEstado) = 'COMPRA' " +
+            "AND UPPER(e.nombreEstado) IN ('COMPLETADA', 'COMPLETADO', 'CONFIRMADA', 'CONFIRMADO') " +
             "AND c.fechaCompra >= :inicio AND c.fechaCompra < :fin")
-    Double sumaIngresosConfirmadosEntre(@Param("inicio") Date inicio, @Param("fin") Date fin);
+        Long totalComprasConfirmadasEntre(@Param("inicio") Date inicio, @Param("fin") Date fin);
 }

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,12 +24,15 @@ import com.waira.waira_v2.dto.CategoriaTreeDTO;
 import com.waira.waira_v2.dto.CrearServicioDTO;
 import com.waira.waira_v2.dto.ExplorarPayloadDTO;
 import com.waira.waira_v2.dto.ProveedorStatsDTO;
+import com.waira.waira_v2.dto.ResenaDTO;
+import com.waira.waira_v2.dto.ServicioDetalleDTO;
 import com.waira.waira_v2.dto.ServicioExplorarDTO;
 import com.waira.waira_v2.dto.SubcategoriaTreeDTO;
 import com.waira.waira_v2.entity.Categoria;
 import com.waira.waira_v2.entity.Direccion;
 import com.waira.waira_v2.entity.Estado;
 import com.waira.waira_v2.entity.Imagen;
+import com.waira.waira_v2.entity.Reseña;
 import com.waira.waira_v2.entity.Servicio;
 import com.waira.waira_v2.entity.Subcategoria;
 import com.waira.waira_v2.entity.Usuario;
@@ -265,6 +269,16 @@ public class ServicioService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public Optional<ServicioDetalleDTO> obtenerDetalleServicio(Integer idServicio) {
+        if (idServicio == null) {
+            return Optional.empty();
+        }
+        return servicioRepository.findById(idServicio)
+                .filter(this::esServicioDisponible)
+                .map(this::construirDetalleServicio);
+    }
+
     private ServicioExplorarDTO mapearServicioExplorar(Servicio servicio, Map<Integer, RatingStats> ratingStats) {
         ServicioExplorarDTO dto = new ServicioExplorarDTO();
         dto.setId(servicio.getIdServicio());
@@ -310,6 +324,93 @@ public class ServicioService {
             dto.setTotalResenas(stats.total);
         }
         return dto;
+    }
+
+    private ServicioDetalleDTO construirDetalleServicio(Servicio servicio) {
+        ServicioDetalleDTO dto = new ServicioDetalleDTO();
+        dto.setId(servicio.getIdServicio());
+        dto.setNombre(servicio.getNombreServicio());
+        dto.setDescripcion(servicio.getDescripcion());
+        dto.setPrecio(servicio.getPrecio());
+        dto.setCiudad(servicio.getDireccion() != null ? servicio.getDireccion().getCiudad() : null);
+        dto.setProveedor(obtenerNombreProveedor(servicio));
+        dto.setDiasDuracion(servicio.getDiasDuracion());
+        dto.setVistas(servicio.getVistas());
+
+        NumberFormat currency = NumberFormat.getCurrencyInstance(LOCALE_CO);
+        currency.setMaximumFractionDigits(0);
+        dto.setPrecioTexto(servicio.getPrecio() != null ? currency.format(servicio.getPrecio()) : "$0");
+
+        List<Imagen> imagenes = servicio.getImagenes() == null ? Collections.emptyList() : servicio.getImagenes();
+        dto.getImagenes().addAll(imagenes.stream()
+                .map(Imagen::getUrl)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
+
+        List<Categoria> categorias = servicio.getCategorias() == null ? Collections.emptyList() : servicio.getCategorias();
+        dto.getCategorias().addAll(categorias.stream()
+                .map(Categoria::getNombreCategoria)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
+
+        List<Subcategoria> subcategorias = servicio.getSubcategorias() == null ? Collections.emptyList() : servicio.getSubcategorias();
+        dto.getSubcategorias().addAll(subcategorias.stream()
+                .map(Subcategoria::getNombreSubcategoria)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
+
+        Object[] resumen = resenaRepository.resumenPorServicio(servicio.getIdServicio());
+        if (resumen != null && resumen.length >= 2) {
+            Double promedio = resumen[0] != null ? ((Number) resumen[0]).doubleValue() : null;
+            Long total = resumen[1] != null ? ((Number) resumen[1]).longValue() : 0L;
+            dto.setCalificacionPromedio(promedio);
+            dto.setTotalResenas(total);
+        } else {
+            dto.setCalificacionPromedio(null);
+            dto.setTotalResenas(0L);
+        }
+
+        dto.setResenas(mapearResenas(servicio));
+        return dto;
+    }
+
+    private String obtenerNombreProveedor(Servicio servicio) {
+        if (servicio == null || servicio.getUsuario() == null) {
+            return "Proveedor verificado";
+        }
+        String nombres = servicio.getUsuario().getNombres() != null ? servicio.getUsuario().getNombres() : "";
+        String apellidos = servicio.getUsuario().getApellidos() != null ? servicio.getUsuario().getApellidos() : "";
+        String full = (nombres + " " + apellidos).trim();
+        return full.isEmpty() ? "Proveedor verificado" : full;
+    }
+
+    private List<ResenaDTO> mapearResenas(Servicio servicio) {
+        List<Reseña> reseñas = resenaRepository.findByServicioOrderByFechaCreacionDesc(servicio);
+        if (reseñas == null || reseñas.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return reseñas.stream()
+                .map(this::mapearResena)
+                .collect(Collectors.toList());
+    }
+
+    private ResenaDTO mapearResena(Reseña reseña) {
+        ResenaDTO dto = new ResenaDTO();
+        dto.setAutor(extraerNombreCompleto(reseña));
+        dto.setCalificacion(reseña.getCalificacion());
+        dto.setFecha(reseña.getFechaCreacion());
+        dto.setComentario(reseña.getComentario());
+        return dto;
+    }
+
+    private String extraerNombreCompleto(Reseña reseña) {
+        if (reseña == null || reseña.getUsuario() == null) {
+            return "Usuario anónimo";
+        }
+        String nombres = reseña.getUsuario().getNombres() != null ? reseña.getUsuario().getNombres() : "";
+        String apellidos = reseña.getUsuario().getApellidos() != null ? reseña.getUsuario().getApellidos() : "";
+        String full = (nombres + " " + apellidos).trim();
+        return full.isEmpty() ? "Usuario anónimo" : full;
     }
 
     private boolean esServicioDisponible(Servicio servicio) {

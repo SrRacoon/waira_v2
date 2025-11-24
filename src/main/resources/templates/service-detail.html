@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${detalle != null ? detalle.nombre : 'Servicio no disponible'}">Detalle del servicio</title>
+    <link rel="stylesheet" href="/css/auth-styles.css" />
+    <link rel="stylesheet" href="/css/explorar-styles.css" />
+    <link rel="stylesheet" href="/css/service-detail.css" />
+</head>
+<body class="detalle-body">
+<header class="explorar-header">
+    <div class="brand" aria-label="Waira">
+        <img src="/imgs/Waira.svg" alt="Logotipo de Waira" class="brand-logo" />
+    </div>
+    <nav class="header-nav" aria-label="Navegación principal">
+        <a href="/explorar" class="nav-link is-active">Servicios</a>
+        <a href="#" class="nav-link">Buzón</a>
+        <a href="#" class="nav-link">Mi Panel</a>
+    </nav>
+    <div class="header-actions">
+        <button type="button" class="btn btn-outline" id="btn-crear-anuncio">Crear anuncio</button>
+        <button type="button" class="btn btn-primary">Ingresar</button>
+    </div>
+</header>
+
+<main class="detalle-main" th:if="${detalle != null}">
+    <section class="detalle-hero">
+        <div class="detalle-gallery">
+            <div class="gallery-main">
+                <img th:src="${#lists.isEmpty(detalle.imagenes)} ? '/imgs/placeholder.png' : detalle.imagenes[0]"
+                     alt="Imagen principal"
+                     data-main-image />
+            </div>
+            <div class="gallery-thumbs" th:if="${!#lists.isEmpty(detalle.imagenes)}">
+                <button type="button" class="thumb" th:each="img, iter : ${detalle.imagenes}"
+                        th:classappend="${iter.index == 0} ? ' is-active'"
+                        th:attr="data-thumb=${img}">
+                    <img th:src="${img}" alt="Miniatura" />
+                </button>
+            </div>
+        </div>
+        <div class="detalle-summary">
+            <p class="detalle-location" th:text="${detalle.ciudad != null ? detalle.ciudad : 'Ubicación pendiente'}"></p>
+            <h1 th:text="${detalle.nombre}"></h1>
+            <div class="detalle-rating">
+                <div class="rating-stars" role="img"
+                     th:attr="aria-label=${detalle.calificacionPromedio != null ? 'Calificación promedio ' + #strings.format('%.1f', detalle.calificacionPromedio) + ' de 5' : 'Sin calificaciones'}">
+                    <span th:each="i : ${#numbers.sequence(1,5)}"
+                          th:classappend="${detalle.calificacionPromedio != null && detalle.calificacionPromedio >= i} ? ' is-filled'"
+                          >&starf;</span>
+                </div>
+                <span class="rating-value" th:text="${detalle.calificacionPromedio != null ? #strings.format('%.1f', detalle.calificacionPromedio) : '0.0'}"></span>
+                <span class="rating-count" th:text="${detalle.totalResenas != null ? detalle.totalResenas + ' reseñas' : 'Sin reseñas'}"></span>
+            </div>
+            <div class="detalle-price">
+                <span>Precio por persona</span>
+                <strong th:text="${detalle.precioTexto}"></strong>
+            </div>
+            <div class="detalle-actions">
+                <button type="button" class="btn btn-primary" data-action="reservar"
+                        th:attr="data-servicio-id=${detalle.id}">Reservar</button>
+            </div>
+            <ul class="detalle-meta">
+                <li><strong>Duración:</strong> <span th:text="${detalle.diasDuracion != null ? detalle.diasDuracion + ' días' : 'Por definir'}"></span></li>
+                <li><strong>Proveedor:</strong> <span th:text="${detalle.proveedor != null ? detalle.proveedor : 'Proveedor verificado'}"></span></li>
+                <li><strong>Vistas:</strong> <span th:text="${detalle.vistas != null ? detalle.vistas : 0}"></span></li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="detalle-description">
+        <h2>Descripción</h2>
+        <p th:text="${detalle.descripcion != null ? detalle.descripcion : 'Descripción no disponible'}"></p>
+        <div class="detalle-tags">
+            <span class="tag" th:each="categoria : ${detalle.categorias}" th:text="${categoria}"></span>
+            <span class="tag is-alt" th:each="subcategoria : ${detalle.subcategorias}" th:text="${subcategoria}"></span>
+        </div>
+    </section>
+
+    <section class="detalle-reviews" id="detalle-reviews">
+        <div class="reviews-header">
+            <h2>Reseñas</h2>
+            <p th:text="${detalle.totalResenas != null ? detalle.totalResenas + ' reseñas en total' : 'Aún no hay reseñas'}"></p>
+        </div>
+        <div th:if="${#lists.isEmpty(detalle.resenas)}" class="reviews-empty">
+            <p>Este servicio aún no tiene reseñas. ¡Sé el primero en compartir tu experiencia!</p>
+        </div>
+        <div class="reviews-list" th:if="${!#lists.isEmpty(detalle.resenas)}">
+            <article class="review" th:each="resena : ${detalle.resenas}">
+                <header class="review-header">
+                    <div>
+                        <strong th:text="${resena.autor}"></strong>
+                        <small th:text="${resena.fecha != null ? #dates.format(resena.fecha, 'dd MMM yyyy') : ''}"></small>
+                    </div>
+                    <div class="review-stars">
+                        <span th:text="${resena.calificacion != null ? resena.calificacion + '/5' : '0/5'}"></span>
+                    </div>
+                </header>
+                <p th:text="${resena.comentario != null ? resena.comentario : 'Sin comentario'}"></p>
+            </article>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/vistas_auth :: modales_auth}"></div>
+<script src="/js/activar-modales.js"></script>
+<script src="/js/service-detail.js"></script>
+</body>
+</html>

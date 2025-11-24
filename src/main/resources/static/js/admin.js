@@ -303,12 +303,12 @@ async function cargarMetricasDashboard(){
         const res = await fetch('/api/admin/metrics');
         if (!res.ok) throw new Error('metrics response not ok');
         const data = await res.json();
-        const formato = new Intl.NumberFormat('es-CO', { style:'currency', currency:'COP', maximumFractionDigits:0 });
+        const formatoNumero = new Intl.NumberFormat('es-CO');
         setText('kpi-total-usuarios', data.totalUsuarios ?? '0');
         setText('kpi-total-operadores', data.totalOperadores ?? '0');
         setText('kpi-total-paquetes', data.totalPaquetes ?? '0');
         setText('kpi-reservas-activas', data.reservasActivas ?? '0');
-        setText('kpi-ingresos-mes', formato.format(data.ingresosMes ?? 0));
+        setText('kpi-compras-completadas', formatoNumero.format(data.comprasCompletadas ?? 0));
         return;
     } catch (err) {
         console.warn('Fallo API /api/admin/metrics, usando fallback', err);
@@ -344,13 +344,12 @@ async function cargarMetricasDashboardFallback(){
 
         try{
             const ri = await fetch('/api/admin/ingresos-mes');
-            const ji = ri.ok ? await ri.json() : { ingresosMes: 0 };
-            const ingresos = Number(ji.ingresosMes || 0);
-            const formato = new Intl.NumberFormat('es-CO', { style:'currency', currency:'COP', maximumFractionDigits:0 });
-            setText('kpi-ingresos-mes', formato.format(ingresos));
+            const ji = ri.ok ? await ri.json() : { comprasCompletadasMes: 0 };
+            const total = Number(ji.comprasCompletadasMes || 0);
+            const formatoNumero = new Intl.NumberFormat('es-CO');
+            setText('kpi-compras-completadas', formatoNumero.format(total));
         }catch(_){
-            const formato = new Intl.NumberFormat('es-CO', { style:'currency', currency:'COP', maximumFractionDigits:0 });
-            setText('kpi-ingresos-mes', formato.format(0));
+            setText('kpi-compras-completadas', '0');
         }
     } catch (e) {
         console.error('Error cargando métricas', e);

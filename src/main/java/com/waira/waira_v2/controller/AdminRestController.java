@@ -60,7 +60,6 @@ public class AdminRestController {
 
     private static final List<String> ROLES_OPERADORES = List.of("PROVEEDOR", "OPERADOR", "OPERADOR_TURISTICO");
     private static final List<String> ESTADOS_RESERVA_ACTIVOS = List.of("CONFIRMADA", "CONFIRMADO", "APROBADA", "APROBADO", "ACTIVA", "ACTIVO");
-    private static final double PLATFORM_FEE_PERCENTAGE = 0.03;
 
     @GetMapping("/solicitudes")
     public ResponseEntity<?> listarSolicitudes() {
@@ -183,8 +182,8 @@ public class AdminRestController {
 
     @GetMapping("/ingresos-mes")
     public ResponseEntity<?> ingresosDelMes() {
-        double total = calcularIngresosMesActual();
-        return ResponseEntity.ok(Map.of("ingresosMes", total));
+        long total = contarComprasCompletadasMesActual();
+        return ResponseEntity.ok(Map.of("comprasCompletadasMes", total));
     }
 
     @GetMapping("/metrics")
@@ -193,19 +192,19 @@ public class AdminRestController {
         long totalOperadores = usuarioRepo.countUsuariosPorRoles(ROLES_OPERADORES);
         long totalPaquetes = servicioRepo.count();
         long reservasActivas = reservaRepo.countReservasActivas(ESTADOS_RESERVA_ACTIVOS);
-        double ingresosMes = calcularIngresosMesActual();
+        long comprasCompletadas = contarComprasCompletadasMesActual();
 
         AdminMetricsDTO dto = new AdminMetricsDTO(
             totalUsuarios,
             totalOperadores,
             totalPaquetes,
             reservasActivas,
-            ingresosMes
+            comprasCompletadas
         );
         return ResponseEntity.ok(dto);
     }
 
-    private double calcularIngresosMesActual() {
+    private long contarComprasCompletadasMesActual() {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.DAY_OF_MONTH, 1);
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -215,7 +214,7 @@ public class AdminRestController {
         Date inicio = cal.getTime();
         cal.add(Calendar.MONTH, 1);
         Date fin = cal.getTime();
-        Double total = compraRepo.sumaIngresosConfirmadosEntre(inicio, fin);
-        return total != null ? total * PLATFORM_FEE_PERCENTAGE : 0.0;
+        Long total = compraRepo.totalComprasConfirmadasEntre(inicio, fin);
+        return total != null ? total : 0L;
     }
 }
