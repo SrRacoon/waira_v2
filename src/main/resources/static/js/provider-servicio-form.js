@@ -170,7 +170,10 @@
             form.submit();
         });
 
-        if (categoriaInputs.length) {
+        if (categoriaInputs.length && subcategoriaInputs.length) {
+            subcategoriaInputs.forEach((sub) => {
+                sub.disabled = true;
+            });
             categoriaInputs.forEach(input => {
                 sincronizarSubcategorias(input.value, input.checked);
                 input.addEventListener('change', () => {

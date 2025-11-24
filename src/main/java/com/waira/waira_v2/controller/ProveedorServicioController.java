@@ -79,6 +79,7 @@ public class ProveedorServicioController {
 
         try {
             servicioService.crearServicio(usuario, crearServicioDTO, imagenesList);
+            session.setAttribute("usuarioLogueado", usuario);
             return "redirect:/dashboard";
         } catch (Exception e) {
             logger.error("Error al crear servicio", e);
@@ -128,6 +129,7 @@ public class ProveedorServicioController {
         List<MultipartFile> imagenesList = imagenes != null ? Arrays.asList(imagenes) : Collections.emptyList();
         try {
             servicioService.actualizarServicio(usuario, idServicio, crearServicioDTO, imagenesList);
+            session.setAttribute("usuarioLogueado", usuario);
             return "redirect:/dashboard?section=servicios";
         } catch (Exception e) {
             logger.error("Error al actualizar servicio {}", idServicio, e);
